@@ -18,59 +18,59 @@ import models.Carrier;
 import models.Statistic;
 
 public class DatabaseConnector {
-	// Database URL, and database credentials.
-	private final String DB_URL = "jdbc:mysql://192.168.178.22:3306/webengdb";
+    // Database URL, and database credentials.
+    private final String DB_URL = "jdbc:mysql://192.168.178.22:3306/webengdb";
     private final String USER = "webenguser";
     private final String PASS = "webengpass123";
     
     ComboPooledDataSource cpds;
     
     public DatabaseConnector() throws PropertyVetoException, SQLException {
-    	cpds = new ComboPooledDataSource();
-    	cpds.setJdbcUrl(DB_URL);
-    	cpds.setUser(USER);                                  
-    	cpds.setPassword(PASS);
-    	
-    	this.createAirportsTable();
-    	this.createCarriersTable();
-    	this.createStatsTable();
-    	this.createExtraStatsTable();
+        cpds = new ComboPooledDataSource();
+        cpds.setJdbcUrl(DB_URL);
+        cpds.setUser(USER);                                  
+        cpds.setPassword(PASS);
+        
+        createAirportsTable();
+        createCarriersTable();
+        createStatsTable();
+        createExtraStatsTable();
     }
     
-	private void createAirportsTable() throws SQLException {
-		Connection conn = null;
-		Statement stmt = null;
-		
-		String query = "CREATE TABLE IF NOT EXISTS airports ("
-				     + "code CHAR(3) PRIMARY KEY,"
-				     + "name VARCHAR(255)"
-				     + ");";
-		
-		try {  
- 	        // Get connection from pool.
-			conn = cpds.getConnection();
-			  
-		    // Execute query.
-		    stmt = conn.createStatement();
-		    stmt.executeUpdate(query);
-		} catch (SQLException e) {
-	        // Handle errors for JDBC.
-	        throw e;
-	   	} finally {
-	        // finally block used to close resources.
-	        try {
-	        	if (stmt != null) stmt.close();
-	        } catch (SQLException e) {
-	        	e.printStackTrace();
-	        }
-	        
-	        try {
-	        	if (conn != null) conn.close();
-	        } catch (SQLException e) {
-	        	e.printStackTrace();
-	        }
-	   	}
-	}
+    private void createAirportsTable() throws SQLException {
+        Connection conn = null;
+        Statement stmt = null;
+        
+        String query = "CREATE TABLE IF NOT EXISTS airports ("
+                     + "code CHAR(3) PRIMARY KEY,"
+                     + "name VARCHAR(255)"
+                     + ");";
+
+        try {
+            // Get connection from pool.
+            conn = cpds.getConnection();
+            
+            // Execute query.
+            stmt = conn.createStatement();
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            // Handle errors for JDBC.
+            throw e;
+        } finally {
+            // finally block used to close resources.
+            try {
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            
+            try {
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 	
 	private void createCarriersTable() throws SQLException {
 		Connection conn = null;
