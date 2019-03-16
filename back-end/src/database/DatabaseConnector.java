@@ -564,6 +564,7 @@ public class DatabaseConnector {
 		    	
 		    	if (i % 1000 == 0 || i == statistics.size()) {
 		    		stmt.executeBatch();
+		    		stmt.clearBatch();
 		    	}
 		    }
 		} catch (SQLException e) {
