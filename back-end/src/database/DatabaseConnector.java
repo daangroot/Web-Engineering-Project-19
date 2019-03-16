@@ -42,9 +42,9 @@ public class DatabaseConnector {
         Statement stmt = null;
 
         String query = "CREATE TABLE IF NOT EXISTS airports ("
-                + "code CHAR(3) PRIMARY KEY,"
-                + "name VARCHAR(255)"
-                + ");";
+                     + "code CHAR(3) PRIMARY KEY,"
+                     + "name VARCHAR(255)"
+                     + ");";
 
         try {
             // Get connection from pool.
@@ -77,9 +77,9 @@ public class DatabaseConnector {
         Statement stmt = null;
 
         String query = "CREATE TABLE IF NOT EXISTS carriers ("
-                + "code CHAR(2) PRIMARY KEY,"
-                + "name VARCHAR(255)"
-                + ");";
+                     + "code CHAR(2) PRIMARY KEY,"
+                     + "name VARCHAR(255)"
+                     + ");";
 
         try {  
             // Get connection from pool.
@@ -112,10 +112,10 @@ public class DatabaseConnector {
         Statement stmt = null;
 
         String query = "CREATE TABLE IF NOT EXISTS stats ("
-                + "airport CHAR(3),"
-                + "carrier CHAR(2),"
-                + "year YEAR,"
-                + "month TINYINT(2) UNSIGNED,"
+                     + "airport CHAR(3),"
+                     + "carrier CHAR(2),"
+                     + "year YEAR,"
+                     + "month TINYINT(2) UNSIGNED,"
 
                      + "cancelledFlightCount MEDIUMINT UNSIGNED NOT NULL,"
                      + "onTimeFlightCount MEDIUMINT UNSIGNED NOT NULL,"
@@ -170,11 +170,11 @@ public class DatabaseConnector {
         Statement stmt = null;
 
         String query = "CREATE TABLE IF NOT EXISTS extraStats ("
-                + "airport1 CHAR(3),"
-                + "airport2 CHAR(3),"
-                + "carrier CHAR(2),"
-                + "year YEAR,"
-                + "month TINYINT(2) UNSIGNED,"
+                     + "airport1 CHAR(3),"
+                     + "airport2 CHAR(3),"
+                     + "carrier CHAR(2),"
+                     + "year YEAR,"
+                     + "month TINYINT(2) UNSIGNED,"
 
                      + "lateAircraftDelaysTimedMean SMALLINT UNSIGNED NOT NULL,"
                      + "lateAircraftDelaysTimedMed SMALLINT UNSIGNED NOT NULL,"
@@ -223,7 +223,7 @@ public class DatabaseConnector {
         PreparedStatement stmt = null;
 
         String query = "INSERT INTO airports (code, name)"
-                + "VALUES (?, ?);";
+                     + "VALUES (?, ?);";
 
         try { 
             // Get connection from pool.
@@ -270,7 +270,7 @@ public class DatabaseConnector {
         List<Airport> airports = new ArrayList<>();
 
         String query = "SELECT * "
-                + "FROM airports;";
+                     + "FROM airports;";
 
         try {  
             // Get connection from pool.
@@ -319,7 +319,7 @@ public class DatabaseConnector {
         PreparedStatement stmt = null;
 
         String query = "INSERT INTO carriers (code, name)"
-                + "VALUES (?, ?);";
+                     + "VALUES (?, ?);";
 
         try { 
             // Get connection from pool.
@@ -366,7 +366,7 @@ public class DatabaseConnector {
         List<Carrier> carriers = new ArrayList<>();
 
         String query = "SELECT * "
-                + "FROM carriers;";
+                     + "FROM carriers;";
 
         try {  
             // Get connection from pool.
@@ -410,10 +410,10 @@ public class DatabaseConnector {
         List<Carrier> carriers = new ArrayList<>();
 
         String query = "SELECT DISTINCT carriers.code, carriers.name "
-                + "FROM carriers "
-                + "INNER JOIN stats "
-                + "ON carriers.code = stats.carrier "
-                + "WHERE stats.airport = ?;";
+                     + "FROM carriers "
+                     + "INNER JOIN stats "
+                     + "ON carriers.code = stats.carrier "
+                     + "WHERE stats.airport = ?;";
 
         try {  
             // Get connection from pool.
@@ -462,10 +462,10 @@ public class DatabaseConnector {
         PreparedStatement stmt = null;
 
         String query = "INSERT INTO stats (airport, carrier, year, month,"
-                + "cancelledFlightCount, onTimeFlightCount, delayedFlightCount, divertedFlightCount, totalFlightCount,"
-                + "lateAircraftDelayCount, weatherDelayCount, securityDelayCount, nationalAviationSystemDelayCount, carrierDelayCount,"
-                + "lateAircraftDelayTime, weatherDelayTime, securityDelayTime, nationalAviationSystemDelayTime, carrierDelayTime, totalDelayTime)"
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+                     + "cancelledFlightCount, onTimeFlightCount, delayedFlightCount, divertedFlightCount, totalFlightCount,"
+                     + "lateAircraftDelayCount, weatherDelayCount, securityDelayCount, nationalAviationSystemDelayCount, carrierDelayCount,"
+                     + "lateAircraftDelayTime, weatherDelayTime, securityDelayTime, nationalAviationSystemDelayTime, carrierDelayTime, totalDelayTime)"
+                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         try {
             // Get connection from pool.
@@ -534,10 +534,10 @@ public class DatabaseConnector {
         PreparedStatement stmt = null;
 
         String query = "UPDATE stats "
-                + "SET cancelledFlightCount = ?, onTimeFlightCount = ?, delayedFlightCount = ?, divertedFlightCount = ?, totalFlightCount = ?,"
-                + "lateAircraftDelayCount = ?, weatherDelayCount = ?, securityDelayCount = ?, nationalAviationSystemDelayCount = ?, carrierDelayCount = ?,"
-                + "lateAircraftDelayTime = ?, weatherDelayTime = ?, securityDelayTime = ?, nationalAviationSystemDelayTime = ?, carrierDelayTime = ?, totalDelayTime = ? "
-                + "WHERE airport = ? AND carrier = ? AND year = ? AND month = ?;";
+                     + "SET cancelledFlightCount = ?, onTimeFlightCount = ?, delayedFlightCount = ?, divertedFlightCount = ?, totalFlightCount = ?,"
+                     + "lateAircraftDelayCount = ?, weatherDelayCount = ?, securityDelayCount = ?, nationalAviationSystemDelayCount = ?, carrierDelayCount = ?,"
+                     + "lateAircraftDelayTime = ?, weatherDelayTime = ?, securityDelayTime = ?, nationalAviationSystemDelayTime = ?, carrierDelayTime = ?, totalDelayTime = ? "
+                     + "WHERE airport = ? AND carrier = ? AND year = ? AND month = ?;";
 
         try {
             // Get connection from pool.
@@ -600,7 +600,7 @@ public class DatabaseConnector {
         PreparedStatement stmt = null;
 
         String query = "DELETE FROM stats "
-                + "WHERE airport = ? AND carrier = ? AND year = ? AND month = ?;";
+                     + "WHERE airport = ? AND carrier = ? AND year = ? AND month = ?;";
 
         try {
             // Get connection from pool.
@@ -637,10 +637,10 @@ public class DatabaseConnector {
         PreparedStatement stmt = null;
 
         String query = "DELETE FROM stats "
-                + "SET cancelledFlightCount = ?, onTimeFlightCount = ?, delayedFlightCount = ?, divertedFlightCount = ?, totalFlightCount = ?,"
-                + "lateAircraftDelayCount = ?, weatherDelayCount = ?, securityDelayCount = ?, nationalAviationSystemDelayCount = ?, carrierDelayCount = ?,"
-                + "lateAircraftDelayTime = ?, weatherDelayTime = ?, securityDelayTime = ?, nationalAviationSystemDelayTime = ?, carrierDelayTime = ?, totalDelayTime = ? "
-                + "WHERE airport = ? AND carrier = ? AND year = ? AND month = ?;";
+                     + "SET cancelledFlightCount = ?, onTimeFlightCount = ?, delayedFlightCount = ?, divertedFlightCount = ?, totalFlightCount = ?,"
+                     + "lateAircraftDelayCount = ?, weatherDelayCount = ?, securityDelayCount = ?, nationalAviationSystemDelayCount = ?, carrierDelayCount = ?,"
+                     + "lateAircraftDelayTime = ?, weatherDelayTime = ?, securityDelayTime = ?, nationalAviationSystemDelayTime = ?, carrierDelayTime = ?, totalDelayTime = ? "
+                     + "WHERE airport = ? AND carrier = ? AND year = ? AND month = ?;";
 
         try {
             // Get connection from pool.
@@ -705,8 +705,8 @@ public class DatabaseConnector {
         Statistic statistic = null;
 
         String query = "SELECT * "
-                + "FROM stats "
-                + "WHERE airport = ? AND carrier = ? AND year = ? AND month = ?;";
+                     + "FROM stats "
+                     + "WHERE airport = ? AND carrier = ? AND year = ? AND month = ?;";
 
         try {  
             // Get connection from pool.
@@ -770,8 +770,8 @@ public class DatabaseConnector {
         List<Statistic> statistics = new ArrayList<>();
 
         String query = "SELECT * "
-                + "FROM stats "
-                + "WHERE airport = ? AND carrier = ?;";
+                     + "FROM stats "
+                     + "WHERE airport = ? AND carrier = ?;";
 
         try {  
             // Get connection from pool.
