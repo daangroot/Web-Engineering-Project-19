@@ -12,12 +12,16 @@ import models.Statistic;
 
 public class Test {
 	public static void main(String[] args) {
-		Airport airport = new Airport("AAC", "Atlanta airport");
-		Airport airport2 = new Airport("AAE", "Atlanta B airport");
-		Carrier carrier = new Carrier("AA", "American airlines");
-		Carrier newCarrier = new Carrier("BB", "Brown Airways");
-		YearMonth yearMonth = YearMonth.of(2018, 12);
-		Statistic stat1 = new Statistic(airport2, newCarrier, yearMonth);
+		Airport airport1 = new Airport("ATL", "Atlanta, GA: Hartsfield-Jackson Atlanta International");
+		Airport airport2 = new Airport("LAS", "Las Vegas, NV: McCarran International");
+		
+		Carrier carrier1 = new Carrier("AA", "American Airlines Inc.");
+		Carrier carrier2 = new Carrier("B6", "JetBlue Airways");
+		
+		YearMonth yearMonth1 = YearMonth.of(2003, 6);
+		
+		
+		/*Statistic stat1 = new Statistic(airport2, newCarrier, yearMonth);
 		stat1.setCancelledFlightCount(0);
 		stat1.setOnTimeFlightCount(1);
 		stat1.setDelayedFlightCount(2);
@@ -59,14 +63,22 @@ public class Test {
 		
 		List<Statistic> stats = new ArrayList<>();
 		stats.add(stat1);
-		stats.add(stat);
+		stats.add(stat);*/
 		
-		List<Carrier> carriers = new ArrayList<>();
+		List<Carrier> carriers = null;
+		List<Statistic> stats = null;
+		Statistic stat = null;
 		
 		try {
 			DatabaseConnector dbconn = new DatabaseConnector();
-			dbconn.addStatistic(stat1);
-			carriers = dbconn.getCarriersAtAirport(airport2);
+			
+			long startTime = System.nanoTime();
+			stats = dbconn.getStatistics(airport1, carrier1);
+			long endTime = System.nanoTime();
+
+			long duration = (endTime - startTime);
+			System.out.print("Query duration: " + duration);
+			
 			dbconn.close();
 		} catch (PropertyVetoException e) {
 			// TODO Auto-generated catch block
@@ -76,8 +88,10 @@ public class Test {
 			e.printStackTrace();
 		}
 		
-		for (Carrier c : carriers) {
-			System.out.println(c.getCode() + " " + c.getName());
+		for (Statistic statistic : stats) {
+			System.out.println(statistic.getCancelledFlightCount() + " " + statistic.getOnTimeFlightCount());
 		}
+		
+		
 	}
 }

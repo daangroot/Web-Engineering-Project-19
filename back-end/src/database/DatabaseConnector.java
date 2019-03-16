@@ -76,7 +76,6 @@ public class DatabaseConnector {
 		Connection conn = null;
 		Statement stmt = null;
 		
-		
 		String query = "CREATE TABLE IF NOT EXISTS carriers ("
 				     + "code CHAR(2) PRIMARY KEY,"
 				     + "name VARCHAR(255)"
@@ -270,7 +269,7 @@ public class DatabaseConnector {
 		ResultSet rs = null;
 		List<Airport> airports = new ArrayList<>();
 		
-		String query = "SELECT *"
+		String query = "SELECT * "
 					 + "FROM airports;";
 		
 		try {  
@@ -366,7 +365,7 @@ public class DatabaseConnector {
 		ResultSet rs = null;
 		List<Carrier> carriers = new ArrayList<>();
 		
-		String query = "SELECT *"
+		String query = "SELECT * "
 					 + "FROM carriers;";
 		
 		try {  
@@ -410,7 +409,7 @@ public class DatabaseConnector {
 		ResultSet rs = null;
 		List<Carrier> carriers = new ArrayList<>();
 		
-		String query = "SELECT carriers.code, carriers.name "
+		String query = "SELECT DISTINCT carriers.code, carriers.name "
 					 + "FROM carriers "
 					 + "INNER JOIN stats "
 					 + "ON carriers.code = stats.carrier "
@@ -452,67 +451,6 @@ public class DatabaseConnector {
 		return carriers;
 	}
 	
-	public Statistic getStatistic(Airport airport, Carrier carrier, YearMonth yearMonth) throws SQLException {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		Statistic statistic = new Statistic(airport, carrier, yearMonth);
-		
-		String query = "SELECT * "
-					 + "FROM stats"
-					 + "WHERE airport = ? AND carrier = ? AND year = ? AND month = ?";
-		
-		try {  
- 	        // Get connection from pool.
-			conn = cpds.getConnection();
-			  
-		    // Execute query.
-		    stmt = conn.prepareStatement(query);
-		    stmt.setString(1, airport.getCode());
-		    stmt.setString(2, carrier.getCode());
-		    stmt.setInt(3, yearMonth.getYear());
-		    stmt.setInt(4, yearMonth.getMonth().getValue());
-		    rs = stmt.executeQuery();
-		    
-		    statistic.setCancelledFlightCount(rs.getInt("cancelledFlightCount"));
-		    statistic.setOnTimeFlightCount(rs.getInt("onTimeFlightCount"));
-		    statistic.setDelayedFlightCount(rs.getInt("delayedFlightCount"));
-		    statistic.setDivertedFlightCount(rs.getInt("divertedFlightCount"));
-		    statistic.setTotalFlightCount(rs.getInt("totalFlightCount"));
-			
-		    statistic.setLateAircraftDelayCount(rs.getInt("lateAircraftDelayCount"));
-		    statistic.setWeatherDelayCount(rs.getInt("weatherDelayCount"));
-		    statistic.setSecurityDelayCount(rs.getInt("securityDelayCount"));
-		    statistic.setNationalAviationSystemDelayCount(rs.getInt("nationalAviationSystemDelayCount"));
-		    statistic.setCarrierDelayCount(rs.getInt("carrierDelayCount"));
-		    
-		    statistic.setLateAircraftDelayTime(rs.getInt("lateAircraftDelayTime"));
-		    statistic.setWeatherDelayTime(rs.getInt("weatherDelayTime"));
-		    statistic.setSecurityDelayTime(rs.getInt("securityDelayTime"));
-		    statistic.setNationalAviationSystemDelayTime(rs.getInt("nationalAviationSystemDelayTime"));
-		    statistic.setCarrierDelayTime(rs.getInt("carrierDelayTime"));
-		    statistic.setTotalDelayTime(rs.getInt("totalDelayTime"));
-		} catch (SQLException e) {
-	        // Handle errors for JDBC.
-	        throw e;
-	   	} finally {
-	        // finally block used to close resources.
-	        try {
-	        	if (stmt != null) stmt.close();
-	        } catch (SQLException e) {
-	        	e.printStackTrace();
-	        }
-	        
-	        try {
-	        	if (conn != null) conn.close();
-	        } catch (SQLException e) {
-	        	e.printStackTrace();
-	        }
-	   	}
-		
-		return statistic;
-	}
-	
 	public void addStatistic(Statistic statistic) throws SQLException {
 		List<Statistic> statistics = new ArrayList<>();
 		statistics.add(statistic);
@@ -523,8 +461,8 @@ public class DatabaseConnector {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		
-		String query = "INSERT INTO stats (airport, carrier, year, month, "
-					 + "cancelledFlightCount, onTimeFlightCount, delayedFlightCount, divertedFlightCount, totalFlightCount, "
+		String query = "INSERT INTO stats (airport, carrier, year, month,"
+					 + "cancelledFlightCount, onTimeFlightCount, delayedFlightCount, divertedFlightCount, totalFlightCount,"
 					 + "lateAircraftDelayCount, weatherDelayCount, securityDelayCount, nationalAviationSystemDelayCount, carrierDelayCount,"
 					 + "lateAircraftDelayTime, weatherDelayTime, securityDelayTime, nationalAviationSystemDelayTime, carrierDelayTime, totalDelayTime)"
 					 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
@@ -564,8 +502,245 @@ public class DatabaseConnector {
 		    	
 		    	if (i % 1000 == 0 || i == statistics.size()) {
 		    		stmt.executeBatch();
-		    		stmt.clearBatch();
 		    	}
+		    }
+		} catch (SQLException e) {
+	        // Handle errors for JDBC.
+			throw e;
+	   	} finally {
+	        // finally block used to close resources.
+	        try {
+	        	if (stmt != null) stmt.close();
+	        } catch (SQLException e) {
+	        	e.printStackTrace();
+	        }
+	        
+	        try {
+	        	if (conn != null) conn.close();
+	        } catch (SQLException e) {
+	        	e.printStackTrace();
+	        }
+	   	}
+	}
+	
+	public void updateStatistic(Statistic statistic) throws SQLException {
+		List<Statistic> statistics = new ArrayList<>();
+		statistics.add(statistic);
+		updateStatistics(statistics);
+	}
+	
+	public void updateStatistics(List<Statistic> statistics) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		String query = "UPDATE stats "
+					 + "SET cancelledFlightCount = ?, onTimeFlightCount = ?, delayedFlightCount = ?, divertedFlightCount = ?, totalFlightCount = ?,"
+					 + "lateAircraftDelayCount = ?, weatherDelayCount = ?, securityDelayCount = ?, nationalAviationSystemDelayCount = ?, carrierDelayCount = ?,"
+					 + "lateAircraftDelayTime = ?, weatherDelayTime = ?, securityDelayTime = ?, nationalAviationSystemDelayTime = ?, carrierDelayTime = ?, totalDelayTime = ? "
+					 + "WHERE airport = ? AND carrier = ? AND year = ? AND month = ?;";
+		
+		try {
+			// Get connection from pool.
+			conn = cpds.getConnection();
+			
+		    // Execute query.
+		    stmt = conn.prepareStatement(query);
+		    
+		    int i = 0;
+		    for (Statistic statistic : statistics) {
+		    	stmt.setInt(1, statistic.getCancelledFlightCount());
+		    	stmt.setInt(2, statistic.getOnTimeFlightCount());
+		    	stmt.setInt(3, statistic.getDelayedFlightCount());
+		    	stmt.setInt(4, statistic.getDivertedFlightCount());
+		    	stmt.setInt(5, statistic.getTotalFlightCount());
+		    	stmt.setInt(6, statistic.getLateAircraftDelayCount());
+		    	stmt.setInt(7, statistic.getWeatherDelayCount());
+		    	stmt.setInt(8, statistic.getSecurityDelayCount());
+		    	stmt.setInt(9, statistic.getNationalAviationSystemDelayCount());
+		    	stmt.setInt(10, statistic.getCarrierDelayCount());
+		    	stmt.setInt(11, statistic.getLateAircraftDelayTime());
+		    	stmt.setInt(12, statistic.getWeatherDelayTime());
+		    	stmt.setInt(13, statistic.getSecurityDelayTime());
+		    	stmt.setInt(14, statistic.getNationalAviationSystemDelayTime());
+		    	stmt.setInt(15, statistic.getCarrierDelayTime());
+		    	stmt.setInt(16, statistic.getTotalDelayTime());
+		    	stmt.setString(17, statistic.getAirport().getCode());
+		    	stmt.setString(18, statistic.getCarrier().getCode());
+		    	stmt.setInt(19, statistic.getYearMonth().getYear());
+		    	stmt.setInt(20, statistic.getYearMonth().getMonthValue());
+		    	
+		    	stmt.addBatch();
+		    	i++;
+		    	
+		    	if (i % 1000 == 0 || i == statistics.size()) {
+		    		stmt.executeBatch();
+		    	}
+		    }
+		} catch (SQLException e) {
+	        // Handle errors for JDBC.
+			throw e;
+	   	} finally {
+	        // finally block used to close resources.
+	        try {
+	        	if (stmt != null) stmt.close();
+	        } catch (SQLException e) {
+	        	e.printStackTrace();
+	        }
+	        
+	        try {
+	        	if (conn != null) conn.close();
+	        } catch (SQLException e) {
+	        	e.printStackTrace();
+	        }
+	   	}
+	}
+	
+	public void deleteStatistic(Airport airport, Carrier carrier, YearMonth yearMonth) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		String query = "DELETE FROM stats "
+					 + "WHERE airport = ? AND carrier = ? AND year = ? AND month = ?;";
+		
+		try {
+			// Get connection from pool.
+			conn = cpds.getConnection();
+			
+		    // Execute query.
+		    stmt = conn.prepareStatement(query);
+		    stmt.setString(1, airport.getCode());
+		    stmt.setString(2, carrier.getCode());
+		    stmt.setInt(3, yearMonth.getYear());
+		    stmt.setInt(4, yearMonth.getMonthValue());
+		    stmt.executeUpdate();
+		} catch (SQLException e) {
+	        // Handle errors for JDBC.
+			throw e;
+	   	} finally {
+	        // finally block used to close resources.
+	        try {
+	        	if (stmt != null) stmt.close();
+	        } catch (SQLException e) {
+	        	e.printStackTrace();
+	        }
+	        
+	        try {
+	        	if (conn != null) conn.close();
+	        } catch (SQLException e) {
+	        	e.printStackTrace();
+	        }
+	   	}
+	}
+	
+	public void deleteStatistics(List<Statistic> statistics) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		String query = "DELETE FROM stats "
+					 + "SET cancelledFlightCount = ?, onTimeFlightCount = ?, delayedFlightCount = ?, divertedFlightCount = ?, totalFlightCount = ?,"
+					 + "lateAircraftDelayCount = ?, weatherDelayCount = ?, securityDelayCount = ?, nationalAviationSystemDelayCount = ?, carrierDelayCount = ?,"
+					 + "lateAircraftDelayTime = ?, weatherDelayTime = ?, securityDelayTime = ?, nationalAviationSystemDelayTime = ?, carrierDelayTime = ?, totalDelayTime = ? "
+					 + "WHERE airport = ? AND carrier = ? AND year = ? AND month = ?;";
+		
+		try {
+			// Get connection from pool.
+			conn = cpds.getConnection();
+			
+		    // Execute query.
+		    stmt = conn.prepareStatement(query);
+		    
+		    int i = 0;
+		    for (Statistic statistic : statistics) {
+		    	stmt.setInt(1, statistic.getCancelledFlightCount());
+		    	stmt.setInt(2, statistic.getOnTimeFlightCount());
+		    	stmt.setInt(3, statistic.getDelayedFlightCount());
+		    	stmt.setInt(4, statistic.getDivertedFlightCount());
+		    	stmt.setInt(5, statistic.getTotalFlightCount());
+		    	stmt.setInt(6, statistic.getLateAircraftDelayCount());
+		    	stmt.setInt(7, statistic.getWeatherDelayCount());
+		    	stmt.setInt(8, statistic.getSecurityDelayCount());
+		    	stmt.setInt(9, statistic.getNationalAviationSystemDelayCount());
+		    	stmt.setInt(10, statistic.getCarrierDelayCount());
+		    	stmt.setInt(11, statistic.getLateAircraftDelayTime());
+		    	stmt.setInt(12, statistic.getWeatherDelayTime());
+		    	stmt.setInt(13, statistic.getSecurityDelayTime());
+		    	stmt.setInt(14, statistic.getNationalAviationSystemDelayTime());
+		    	stmt.setInt(15, statistic.getCarrierDelayTime());
+		    	stmt.setInt(16, statistic.getTotalDelayTime());
+		    	stmt.setString(17, statistic.getAirport().getCode());
+		    	stmt.setString(18, statistic.getCarrier().getCode());
+		    	stmt.setInt(19, statistic.getYearMonth().getYear());
+		    	stmt.setInt(20, statistic.getYearMonth().getMonthValue());
+		    	
+		    	stmt.addBatch();
+		    	i++;
+		    	
+		    	if (i % 1000 == 0 || i == statistics.size()) {
+		    		stmt.executeBatch();
+		    	}
+		    }
+		} catch (SQLException e) {
+	        // Handle errors for JDBC.
+			throw e;
+	   	} finally {
+	        // finally block used to close resources.
+	        try {
+	        	if (stmt != null) stmt.close();
+	        } catch (SQLException e) {
+	        	e.printStackTrace();
+	        }
+	        
+	        try {
+	        	if (conn != null) conn.close();
+	        } catch (SQLException e) {
+	        	e.printStackTrace();
+	        }
+	   	}
+	}
+	
+	public Statistic getStatistic(Airport airport, Carrier carrier, YearMonth yearMonth) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Statistic statistic = null;
+		
+		String query = "SELECT * "
+					 + "FROM stats "
+					 + "WHERE airport = ? AND carrier = ? AND year = ? AND month = ?;";
+		
+		try {  
+ 	        // Get connection from pool.
+			conn = cpds.getConnection();
+			  
+		    // Execute query.
+		    stmt = conn.prepareStatement(query);
+		    stmt.setString(1, airport.getCode());
+		    stmt.setString(2, carrier.getCode());
+		    stmt.setInt(3, yearMonth.getYear());
+		    stmt.setInt(4, yearMonth.getMonth().getValue());
+		    rs = stmt.executeQuery();
+		    
+		    if (rs.next()) {
+		    	statistic = new Statistic(airport, carrier, yearMonth);
+		    	
+			    statistic.setCancelledFlightCount(rs.getInt("cancelledFlightCount"));
+			    statistic.setOnTimeFlightCount(rs.getInt("onTimeFlightCount"));
+			    statistic.setDelayedFlightCount(rs.getInt("delayedFlightCount"));
+			    statistic.setDivertedFlightCount(rs.getInt("divertedFlightCount"));
+			    statistic.setTotalFlightCount(rs.getInt("totalFlightCount"));
+				
+			    statistic.setLateAircraftDelayCount(rs.getInt("lateAircraftDelayCount"));
+			    statistic.setWeatherDelayCount(rs.getInt("weatherDelayCount"));
+			    statistic.setSecurityDelayCount(rs.getInt("securityDelayCount"));
+			    statistic.setNationalAviationSystemDelayCount(rs.getInt("nationalAviationSystemDelayCount"));
+			    statistic.setCarrierDelayCount(rs.getInt("carrierDelayCount"));
+			    
+			    statistic.setLateAircraftDelayTime(rs.getInt("lateAircraftDelayTime"));
+			    statistic.setWeatherDelayTime(rs.getInt("weatherDelayTime"));
+			    statistic.setSecurityDelayTime(rs.getInt("securityDelayTime"));
+			    statistic.setNationalAviationSystemDelayTime(rs.getInt("nationalAviationSystemDelayTime"));
+			    statistic.setCarrierDelayTime(rs.getInt("carrierDelayTime"));
+			    statistic.setTotalDelayTime(rs.getInt("totalDelayTime"));
 		    }
 		} catch (SQLException e) {
 	        // Handle errors for JDBC.
@@ -584,8 +759,76 @@ public class DatabaseConnector {
 	        	e.printStackTrace();
 	        }
 	   	}
+		
+		return statistic;
 	}
 	
+	public List<Statistic> getStatistics(Airport airport, Carrier carrier) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		List<Statistic> statistics = new ArrayList<>();
+		
+		String query = "SELECT * "
+					 + "FROM stats "
+					 + "WHERE airport = ? AND carrier = ?;";
+		
+		try {  
+ 	        // Get connection from pool.
+			conn = cpds.getConnection();
+			  
+		    // Execute query.
+		    stmt = conn.prepareStatement(query);
+		    stmt.setString(1, airport.getCode());
+		    stmt.setString(2, carrier.getCode());
+		    rs = stmt.executeQuery();
+		    
+		    while (rs.next()) {
+		    	YearMonth yearMonth = YearMonth.of(rs.getInt("year"), rs.getInt("month"));
+		    	Statistic statistic = new Statistic(airport, carrier, yearMonth);
+		    	
+			    statistic.setCancelledFlightCount(rs.getInt("cancelledFlightCount"));
+			    statistic.setOnTimeFlightCount(rs.getInt("onTimeFlightCount"));
+			    statistic.setDelayedFlightCount(rs.getInt("delayedFlightCount"));
+			    statistic.setDivertedFlightCount(rs.getInt("divertedFlightCount"));
+			    statistic.setTotalFlightCount(rs.getInt("totalFlightCount"));
+				
+			    statistic.setLateAircraftDelayCount(rs.getInt("lateAircraftDelayCount"));
+			    statistic.setWeatherDelayCount(rs.getInt("weatherDelayCount"));
+			    statistic.setSecurityDelayCount(rs.getInt("securityDelayCount"));
+			    statistic.setNationalAviationSystemDelayCount(rs.getInt("nationalAviationSystemDelayCount"));
+			    statistic.setCarrierDelayCount(rs.getInt("carrierDelayCount"));
+			    
+			    statistic.setLateAircraftDelayTime(rs.getInt("lateAircraftDelayTime"));
+			    statistic.setWeatherDelayTime(rs.getInt("weatherDelayTime"));
+			    statistic.setSecurityDelayTime(rs.getInt("securityDelayTime"));
+			    statistic.setNationalAviationSystemDelayTime(rs.getInt("nationalAviationSystemDelayTime"));
+			    statistic.setCarrierDelayTime(rs.getInt("carrierDelayTime"));
+			    statistic.setTotalDelayTime(rs.getInt("totalDelayTime"));
+			    
+			    statistics.add(statistic);
+		    }
+		} catch (SQLException e) {
+	        // Handle errors for JDBC.
+	        throw e;
+	   	} finally {
+	        // finally block used to close resources.
+	        try {
+	        	if (stmt != null) stmt.close();
+	        } catch (SQLException e) {
+	        	e.printStackTrace();
+	        }
+	        
+	        try {
+	        	if (conn != null) conn.close();
+	        } catch (SQLException e) {
+	        	e.printStackTrace();
+	        }
+	   	}
+		
+		return statistics;
+	}
+		
 	public void close() {
 		cpds.close();
 	}

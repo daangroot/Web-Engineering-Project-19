@@ -90,24 +90,24 @@ public class JsonDataImporter {
 			int totalDelayTime = jsonDelayTime.get("total").getAsInt();
 	        
 			Statistic stat = new Statistic(airport, carrier, yearMonth);
-			stat.setCancelledFlightCount(cancelledFlightCount);
-			stat.setOnTimeFlightCount(onTimeFlightCount);
-			stat.setDelayedFlightCount(delayedFlightCount);
-			stat.setDivertedFlightCount(divertedFlightCount);
-			stat.setTotalFlightCount(totalFlightCount);
+			stat.setCancelledFlightCount((cancelledFlightCount > 0) ? cancelledFlightCount: 0);
+			stat.setOnTimeFlightCount((onTimeFlightCount > 0) ? onTimeFlightCount: 0);
+			stat.setDelayedFlightCount((delayedFlightCount > 0) ? delayedFlightCount: 0);
+			stat.setDivertedFlightCount((divertedFlightCount > 0) ? divertedFlightCount: 0);
+			stat.setTotalFlightCount((totalFlightCount > 0) ? totalFlightCount: 0);
 	        
-			stat.setLateAircraftDelayCount(lateAircraftDelayCount);
-			stat.setWeatherDelayCount(weatherDelayCount);
-			stat.setSecurityDelayCount(securityDelayCount);
-			stat.setNationalAviationSystemDelayCount(nationalAviationSystemDelayCount);
-			stat.setCarrierDelayCount(carrierDelayCount);
+			stat.setLateAircraftDelayCount((lateAircraftDelayCount > 0) ? lateAircraftDelayCount: 0);
+			stat.setWeatherDelayCount((weatherDelayCount > 0) ? weatherDelayCount: 0);
+			stat.setSecurityDelayCount((securityDelayCount > 0) ? securityDelayCount: 0);
+			stat.setNationalAviationSystemDelayCount((nationalAviationSystemDelayCount > 0) ? nationalAviationSystemDelayCount: 0);
+			stat.setCarrierDelayCount((carrierDelayCount > 0) ? carrierDelayCount: 0);
 	        
-			stat.setLateAircraftDelayTime(lateAircraftDelayTime);
-			stat.setWeatherDelayTime(weatherDelayTime);
-			stat.setSecurityDelayTime(securityDelayTime);
-			stat.setNationalAviationSystemDelayTime(nationalAviationSystemDelayTime);
-			stat.setCarrierDelayTime(carrierDelayTime);
-			stat.setTotalDelayTime(totalDelayTime);
+			stat.setLateAircraftDelayTime((lateAircraftDelayTime > 0) ? lateAircraftDelayTime: 0);
+			stat.setWeatherDelayTime((weatherDelayTime > 0) ? weatherDelayTime: 0);
+			stat.setSecurityDelayTime((securityDelayTime > 0) ? securityDelayTime: 0);
+			stat.setNationalAviationSystemDelayTime((nationalAviationSystemDelayTime > 0) ? nationalAviationSystemDelayTime: 0);
+			stat.setCarrierDelayTime((carrierDelayTime > 0) ? carrierDelayTime: 0);
+			stat.setTotalDelayTime((totalDelayTime > 0) ? totalDelayTime: 0);
 	        
 			stats.add(stat);
 		}
@@ -129,10 +129,8 @@ public class JsonDataImporter {
 			dbconn.addStatistics(stats);
 		} catch (PropertyVetoException e) {
 			e.printStackTrace();
-			System.exit(0);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.exit(0);
 		}
 	}
 }
