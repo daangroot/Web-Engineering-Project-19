@@ -6,6 +6,8 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.Gson;
+
 import models.Airport;
 import models.Carrier;
 import models.Statistic;
@@ -88,8 +90,10 @@ public class Test {
 			e.printStackTrace();
 		}
 		
+		Gson gson = new Gson(); 
+
 		for (Statistic statistic : stats) {
-			System.out.println(statistic.getCancelledFlightCount() + " " + statistic.getOnTimeFlightCount());
+			System.out.println(gson.toJson(statistic));
 		}
 		
 		
