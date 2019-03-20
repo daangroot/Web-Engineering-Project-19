@@ -479,16 +479,19 @@ public class DatabaseConnector {
                 stmt.setString(2, statistic.getCarrier().getCode());
                 stmt.setInt(3, statistic.getYearMonth().getYear());
                 stmt.setInt(4, statistic.getYearMonth().getMonthValue());
+                
                 stmt.setInt(5, statistic.getCancelledFlightCount());
                 stmt.setInt(6, statistic.getOnTimeFlightCount());
                 stmt.setInt(7, statistic.getDelayedFlightCount());
                 stmt.setInt(8, statistic.getDivertedFlightCount());
                 stmt.setInt(9, statistic.getTotalFlightCount());
+                
                 stmt.setInt(10, statistic.getLateAircraftDelayCount());
                 stmt.setInt(11, statistic.getWeatherDelayCount());
                 stmt.setInt(12, statistic.getSecurityDelayCount());
                 stmt.setInt(13, statistic.getNationalAviationSystemDelayCount());
                 stmt.setInt(14, statistic.getCarrierDelayCount());
+                
                 stmt.setInt(15, statistic.getLateAircraftDelayTime());
                 stmt.setInt(16, statistic.getWeatherDelayTime());
                 stmt.setInt(17, statistic.getSecurityDelayTime());
@@ -552,17 +555,20 @@ public class DatabaseConnector {
                 stmt.setInt(3, statistic.getDelayedFlightCount());
                 stmt.setInt(4, statistic.getDivertedFlightCount());
                 stmt.setInt(5, statistic.getTotalFlightCount());
+                
                 stmt.setInt(6, statistic.getLateAircraftDelayCount());
                 stmt.setInt(7, statistic.getWeatherDelayCount());
                 stmt.setInt(8, statistic.getSecurityDelayCount());
                 stmt.setInt(9, statistic.getNationalAviationSystemDelayCount());
                 stmt.setInt(10, statistic.getCarrierDelayCount());
+                
                 stmt.setInt(11, statistic.getLateAircraftDelayTime());
                 stmt.setInt(12, statistic.getWeatherDelayTime());
                 stmt.setInt(13, statistic.getSecurityDelayTime());
                 stmt.setInt(14, statistic.getNationalAviationSystemDelayTime());
                 stmt.setInt(15, statistic.getCarrierDelayTime());
                 stmt.setInt(16, statistic.getTotalDelayTime());
+                
                 stmt.setString(17, statistic.getAirport().getCode());
                 stmt.setString(18, statistic.getCarrier().getCode());
                 stmt.setInt(19, statistic.getYearMonth().getYear());
@@ -655,17 +661,20 @@ public class DatabaseConnector {
                 stmt.setInt(3, statistic.getDelayedFlightCount());
                 stmt.setInt(4, statistic.getDivertedFlightCount());
                 stmt.setInt(5, statistic.getTotalFlightCount());
+                
                 stmt.setInt(6, statistic.getLateAircraftDelayCount());
                 stmt.setInt(7, statistic.getWeatherDelayCount());
                 stmt.setInt(8, statistic.getSecurityDelayCount());
                 stmt.setInt(9, statistic.getNationalAviationSystemDelayCount());
                 stmt.setInt(10, statistic.getCarrierDelayCount());
+                
                 stmt.setInt(11, statistic.getLateAircraftDelayTime());
                 stmt.setInt(12, statistic.getWeatherDelayTime());
                 stmt.setInt(13, statistic.getSecurityDelayTime());
                 stmt.setInt(14, statistic.getNationalAviationSystemDelayTime());
                 stmt.setInt(15, statistic.getCarrierDelayTime());
                 stmt.setInt(16, statistic.getTotalDelayTime());
+                
                 stmt.setString(17, statistic.getAirport().getCode());
                 stmt.setString(18, statistic.getCarrier().getCode());
                 stmt.setInt(19, statistic.getYearMonth().getYear());

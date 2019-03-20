@@ -1,8 +1,10 @@
 package converters;
 
+import java.time.YearMonth;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,7 +17,7 @@ public class JsonConverter implements DataConverter {
     private Gson gson;
     
     public JsonConverter() {
-        gson = new Gson(); 
+        gson = new Gson();
     }
 
     @Override
@@ -69,6 +71,34 @@ public class JsonConverter implements DataConverter {
         
         return jsonArray.toString();
     }
+    
+    @Override
+    public Statistic StringToStatistic(Airport airport, Carrier carrier, YearMonth yearMonth, String statisticData) {
+        JsonObject jsonObject = gson.fromJson(statisticData, JsonObject.class);
+        
+        Statistic statistic = new Statistic(airport, carrier, yearMonth);
+        
+        statistic.setCancelledFlightCount(jsonObject.get("cancelledFlightCount").getAsInt());
+        statistic.setOnTimeFlightCount(jsonObject.get("onTimeFlightCount").getAsInt());
+        statistic.setDelayedFlightCount(jsonObject.get("delayedFlightCount").getAsInt());
+        statistic.setDivertedFlightCount(jsonObject.get("divertedFlightCount").getAsInt());
+        statistic.setTotalFlightCount(jsonObject.get("totalFlightCount").getAsInt());
+        
+        statistic.setLateAircraftDelayCount(jsonObject.get("lateAircraftDelayCount").getAsInt());
+        statistic.setCarrierDelayCount(jsonObject.get("carrierDelayCount").getAsInt());
+        statistic.setWeatherDelayCount(jsonObject.get("weatherDelayCount").getAsInt());
+        statistic.setSecurityDelayCount(jsonObject.get("securityDelayCount").getAsInt());
+        statistic.setNationalAviationSystemDelayCount(jsonObject.get("nationalAviationSystemDelayCount").getAsInt());
+        
+        statistic.setLateAircraftDelayTime(jsonObject.get("lateAircraftDelayTime").getAsInt());
+        statistic.setCarrierDelayTime(jsonObject.get("carrierDelayTime").getAsInt());
+        statistic.setWeatherDelayTime(jsonObject.get("weatherDelayTime").getAsInt());
+        statistic.setSecurityDelayTime(jsonObject.get("securityDelayTime").getAsInt());
+        statistic.setNationalAviationSystemDelayTime(jsonObject.get("nationalAviationSystemDelayTime").getAsInt());
+        statistic.setTotalDelayTime(jsonObject.get("totalDelayTime").getAsInt());
+        
+        return statistic;
+    }
 
     @Override
     public String StatisticToFlightString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth,
@@ -117,6 +147,4 @@ public class JsonConverter implements DataConverter {
         // TODO Auto-generated method stub
         return null;
     }
-    
-    
 }

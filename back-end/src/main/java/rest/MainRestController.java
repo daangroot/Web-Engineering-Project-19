@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -163,9 +165,10 @@ public class MainRestController {
         
         return new ResponseEntity<String>(responseBody, responseHeaders, HttpStatus.OK);
     }
-    /*
-    public ResponseEntity<String> postStats(@RequestHeader("Content-Type") String mediaType, @PathVariable String airportCode, @PathVariable String carrierCode,
-            @RequestParam(value="year", required=false) Integer year, @RequestParam(value="month", required=false) Integer month) {
+    
+    @PostMapping("/airports/{airportCode}/carriers/{carrierCode}/stats")
+    public ResponseEntity<String> postStats(@RequestHeader("Content-Type") String mediaType, @RequestBody String data, @PathVariable String airportCode, @PathVariable String carrierCode,
+                                            @RequestParam(value="year", required=false) Integer year, @RequestParam(value="month", required=false) Integer month) {
         Airport airport = new Airport(airportCode, null);
         Carrier carrier = new Carrier(carrierCode, null);
         
@@ -173,8 +176,39 @@ public class MainRestController {
         Statistic statistic = null;
         
         if ((year != null && year < 0) || (month != null && month < 1)) {
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        
+        if (mediaType.equals("text/csv")) {
+            
+        } else {
+            
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        if (year != null && month != null) {
+            YearMonth yearMonth = YearMonth.of(year, month);
+            statistic = databaseConnector.getStatistic(airport, carrier, yearMonth);
+        }  else if (year != null) {
+            statistics = databaseConnector.getStatisticsInYear(airport, carrier, year);
+        } else if (month != null) {
+            statistics = databaseConnector.getStatisticsInMonth(airport, carrier, month);
+        } else {
+            statistics = databaseConnector.getStatistics(airport, carrier);
+        }
+        
         
         try {
         if (year != null && month != null) {
@@ -211,5 +245,5 @@ public class MainRestController {
         }
         
         return new ResponseEntity<String>(responseBody, responseHeaders, HttpStatus.OK);
-        }*/
+        }
 }
