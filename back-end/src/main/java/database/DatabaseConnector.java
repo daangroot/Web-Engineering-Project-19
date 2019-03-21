@@ -798,9 +798,11 @@ public class DatabaseConnector {
 
     public Statistic getStatistic(Airport airport, Carrier carrier, YearMonth yearMonth) throws SQLException {
         List<Statistic> statistics = getStatistics(airport, carrier, yearMonth.getYear(), yearMonth.getMonthValue());
-        Statistic statistic = statistics.get(0);
-
-        return statistic;
+        if (!statistics.isEmpty()) {
+            return statistics.get(0);
+        } else {
+            return null;
+        }
     }
     
     public List<Statistic> getStatisticsInYear(Airport airport, Carrier carrier, int year) throws SQLException {
