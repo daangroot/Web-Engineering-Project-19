@@ -192,6 +192,7 @@ public class CsvConverter implements DataConverter {
                                          boolean securityDelayCount, boolean nationalAviationSystemDelayCount) {
         // TODO Auto-generated method stub
         return null;
+
     }
 
     @Override
@@ -200,21 +201,60 @@ public class CsvConverter implements DataConverter {
                                           boolean securityDelayCount, boolean nationalAviationSystemDelayCount) {
         // TODO Auto-generated method stub
         return null;
+    	
+
     }
 
     @Override
     public String StatisticToDelayTimeString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth,
                                              boolean lateAircraftDelayTime, boolean carrierDelayTime, boolean weatherDelayTime,
                                              boolean securityDelayTime, boolean nationalAviationSystemDelayTime, boolean totalDelayTime) {
-        // TODO Auto-generated method stub
-        return null;
+        List <Statistic> statistics = new ArrayList<>();
+        statistics.add(statistic);
+        
+        return StatisticsToString(statistics, airport, carrier, yearMonth,lateAircraftDelayCount,carrierDelayCount,
+        		weatherDelayCount,securityDelayCount,nationalAviationSystemDelayCount);
     }
 
     @Override
     public String StatisticsToDelayTimeString(List<Statistic> statistics, boolean airport, boolean carrier,
                                               boolean yearMonth, boolean lateAircraftDelayTime, boolean carrierDelayTime, boolean weatherDelayTime,
                                               boolean securityDelayTime, boolean nationalAviationSystemDelayTime, boolean totalDelayTime) {
-        // TODO Auto-generated method stub
-        return null;
+        String csv = "";
+
+        // Header record.
+        if (airport) {
+            csv += "airportCode, airportName ";
+        }
+        
+        if (carrier) {
+            csv += "carrierCode, carrierName, ";
+        }
+        
+        if (yearMonth) {
+            csv += "year, month, ";
+        }
+        
+        csv += "lateAircraftDelayTime, carrierDelayTime, weatherDelayTime, securityDelayTime, nationalAviationSystemDelayTime, totalDelayTime\n";
+      
+        // Records.
+        for (Statistic statistic : statistics) {
+            if (airport) {
+                csv += statistic.getAirport().getCode() + ", " + statistic.getAirport().getName() + ", ";
+            }
+            
+            if (carrier) {
+                csv += statistic.getCarrier().getCode() + ", " + statistic.getCarrier().getName() + ", ";
+            }
+            
+            if (yearMonth) {
+                csv += statistic.getYearMonth().getYear() + ", " + statistic.getYearMonth().getMonthValue() + ", ";;
+            }
+            
+            csv += statistic.getLateAircraftDelayTime() + ", " + statistic.getCarrierDelayTime() + ", " + statistic.getWeatherDelayTime() + ", "
+                 + statistic.getSecurityDelayTime() + ", " + statistic.getNationalAviationSystemDelayTime() + ", " + statistic.getTotalDelayTime() + "\n";
+        }
+        
+        return csv;
     }
 }

@@ -1,6 +1,5 @@
 package converters;
 
-import java.time.YearMonth;
 import java.util.List;
 
 import models.Airport;
@@ -14,7 +13,7 @@ public interface DataConverter {
     public String StatisticToString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth) throws Exception;
     public String StatisticsToString(List<Statistic> statistics, boolean airport, boolean carrier, boolean yearMonth) throws Exception;
     public List<Statistic> StringToStatistics(String statisticData) throws Exception;
-    
+
     public String StatisticToFlightString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth,
                                           boolean cancelledFlightCount, boolean onTimeFlightCount, boolean delayedFlightCount,
                                           boolean divertedFlightCount, boolean totalFlightCount);

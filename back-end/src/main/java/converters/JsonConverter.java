@@ -1,12 +1,14 @@
 package converters;
 
+<<<<<<< HEAD
 import java.text.ParseException;
 import java.time.YearMonth;
 import java.util.ArrayList;
+=======
+>>>>>>> bcbb90217d5eded3260b977b4c017296c76176a5
 import java.util.List;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -19,7 +21,7 @@ public class JsonConverter implements DataConverter {
     private Gson gson;
     
     public JsonConverter() {
-        gson = new Gson();
+        gson = new Gson(); 
     }
 
     @Override
@@ -152,31 +154,100 @@ public class JsonConverter implements DataConverter {
     public String StatisticToDelayString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth,
             boolean lateAircraftDelayCount, boolean carrierDelayCount, boolean weatherDelayCount,
             boolean securityDelayCount, boolean nationalAviationSystemDelayCount) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override
     public String StatisticsToDelayString(List<Statistic> statistics, boolean airport, boolean carrier,
             boolean yearMonth, boolean lateAircraftDelayCount, boolean carrierDelayCount, boolean weatherDelayCount,
             boolean securityDelayCount, boolean nationalAviationSystemDelayCount) {
-        // TODO Auto-generated method stub
-        return null;
+
     }
 
     @Override
     public String StatisticToDelayTimeString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth,
             boolean lateAircraftDelayTime, boolean carrierDelayTime, boolean weatherDelayTime,
             boolean securityDelayTime, boolean nationalAviationSystemDelayTime, boolean totalDelayTime) {
-        // TODO Auto-generated method stub
-        return null;
+        JsonObject jsonObject = gson.toJsonTree(statistic).getAsJsonObject();
+        
+        if (!airport) {
+            jsonObject.remove("airport");
+        }
+        
+        if (!carrier) {
+            jsonObject.remove("carrier");
+        }
+        
+        if (!yearMonth) {
+            jsonObject.remove("yearMonth");
+        }      
+        
+        if (!lateAircraftDelayCount) {
+            jsonObject.remove("lateAircraftDelayCount");
+        }
+        
+        if (!carrierDelayCount) {
+            jsonObject.remove("carrierDelayCount");
+        }
+        
+        if (!weatherDelayCount) {
+            jsonObject.remove("weatherDelayCount");
+        }
+        
+        if (!securityDealyCount) {
+            jsonObject.remove("securityDealyCount");
+        }
+        
+        if (!nationalAviationSystemDelayCount) {
+            jsonObject.remove("nationalAviationSystemDelayCount");
+        }
+        return jsonObject.toString();
+
     }
 
     @Override
     public String StatisticsToDelayTimeString(List<Statistic> statistics, boolean airport, boolean carrier,
             boolean yearMonth, boolean lateAircraftDelayTime, boolean carrierDelayTime, boolean weatherDelayTime,
             boolean securityDelayTime, boolean nationalAviationSystemDelayTime, boolean totalDelayTime) {
-        // TODO Auto-generated method stub
-        return null;
+    	JsonArray jsonArray = gson.toJsonTree(statistics).getAsJsonArray();
+        
+        for (JsonElement jsonElement : jsonArray) {
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            
+            if (!airport) {
+                jsonObject.remove("airport");
+            }
+            
+            if (!carrier) {
+                jsonObject.remove("carrier");
+            }
+            
+            if (!yearMonth) {
+                jsonObject.remove("yearMonth");
+            }
+            
+            if (!lateAircraftDelayCount) {
+                jsonObject.remove("lateAircraftDelayCount");
+            }
+            
+            if (!carrierDelayCount) {
+                jsonObject.remove("carrierDelayCount");
+            }
+            
+            if (!weatherDelayCount) {
+                jsonObject.remove("weatherDelayCount");
+            }
+            
+            if (!securityDelayCount) {
+                jsonObject.remove("securityDelayCount");
+            }
+            
+            if (!nationalAviationSystemDelayCount) {
+                jsonObject.remove("nationalAviationSystemDelayCount");
+            }
+        }
+        
+        return jsonArray.toString();
     }
+    
+    
 }
