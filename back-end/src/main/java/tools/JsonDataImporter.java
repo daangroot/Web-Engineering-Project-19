@@ -7,10 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.SQLException;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,6 +18,7 @@ import com.google.gson.JsonObject;
 import database.DatabaseConnector;
 import models.Airport;
 import models.Carrier;
+import models.ExtraStatistic;
 import models.Statistic;
 
 public class JsonDataImporter {
@@ -30,6 +28,8 @@ public class JsonDataImporter {
         List<Airport> airports = new ArrayList<>();
         List<Carrier> carriers = new ArrayList<>();
         List<Statistic> stats = new ArrayList<>();
+        List<Integer> lateAircraftDelayTimesArray = new ArrayList<Integer>();
+        List<Integer> carrierDelayTimesArray = new ArrayList<Integer>();
 
         final String filePath = "C:\\\\Users\\Daan\\Downloads\\airlines.json";
         BufferedReader bufferedReader = null;
@@ -110,7 +110,22 @@ public class JsonDataImporter {
             stat.setTotalDelayTime((totalDelayTime > 0) ? totalDelayTime: 0);
 
             stats.add(stat);
+            
+            lateAircraftDelayTimesArray.add(lateAircraftDelayTime);
+            carrierDelayTimesArray.add(carrierDelayTime);
+
+            ExtraStatistic extraStatistic = new ExtraStatistic(airport, airport, carrier);
+            extraStatistic.setLateAircraftDelaysTimedMean(mean((ArrayList<Integer>) lateAircraftDelayTimesArray));
+            extraStatistic.setLateAircraftDelaysTimedMed(median((ArrayList<Integer>) lateAircraftDelayTimesArray));
+            extraStatistic.setLateAircraftDelaysTimedSd(standardDeviation((ArrayList<Integer>) lateAircraftDelayTimesArray));
+            extraStatistic.setCarrierAircraftDelaysTimedMean(mean((ArrayList<Integer>) carrierDelayTimesArray));
+            extraStatistic.setCarrierAircraftDelaysTimedMed(median((ArrayList<Integer>) carrierDelayTimesArray));
+            extraStatistic.setCarrierAircraftDelaysTimedMed(standardDeviation((ArrayList<Integer>) carrierDelayTimesArray));
         }
+
+
+
+
 
         for (Map.Entry<String, String> item : airportsMap.entrySet()) {
             Airport airport = new Airport(item.getKey(), item.getValue());
@@ -132,5 +147,50 @@ public class JsonDataImporter {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static double median(ArrayList<Integer> values){
+        Arrays.sort(new ArrayList[]{values});
+        double median;
+        // get count of scores
+        int totalElements = values.size();
+        // check if total number of scores is even
+        if (totalElements % 2 == 0) {
+            int sumOfMiddleElements = values.get(totalElements / 2) + values.get(totalElements / 2 - 1);
+            // calculate average of middle elements
+            median = ((double) sumOfMiddleElements) / 2;
+        } else {
+            // get the middle element
+            median = (double) values.get(values.size() / 2);
+        }
+        return median;
+    }
+
+    public static double mean(ArrayList<Integer> values){
+        double mean;
+        int sum = 0, i;
+        for(double num : values) {
+            sum+= num;
+        }
+        mean = sum/values.size();
+        return mean;
+    }
+
+    public static double standardDeviation(ArrayList<Integer> values)
+    {
+        double sum = 0.0, standardDeviation = 0.0;
+        int length = values.size();
+
+        for(double num : values) {
+            sum += num;
+        }
+
+        double mean = sum/length;
+
+        for(double num: values) {
+            standardDeviation += Math.pow(num - mean, 2);
+        }
+
+        return Math.sqrt(standardDeviation/length);
     }
 }

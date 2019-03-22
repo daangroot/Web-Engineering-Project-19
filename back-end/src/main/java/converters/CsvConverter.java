@@ -1,18 +1,11 @@
 package converters;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
-
 import models.Airport;
 import models.Carrier;
+import models.ExtraStatistic;
 import models.Statistic;
 
 public class CsvConverter implements DataConverter {
@@ -22,35 +15,35 @@ public class CsvConverter implements DataConverter {
     }
 
     @Override
-    public String AirportsToString(List<Airport> airports) throws IOException {
-        StringWriter stringWriter = new StringWriter();
-        CSVPrinter printer = new CSVPrinter(stringWriter, CSVFormat.DEFAULT.withHeader("code", "name"));
-            
+    public String AirportsToString(List<Airport> airports) {
+        String csv;
+
+        // Header record.
+        csv = "code, name\n";
+
         for (Airport airport : airports) {
-            printer.printRecord(airport.getCode(), airport.getName());
+            csv += airport.getCode() + ", \"" + airport.getName() + "\"\n";
         }
         
-        printer.close();
-       
-        return stringWriter.toString();
+        return csv;
     }
 
     @Override
-    public String CarriersToString(List<Carrier> carriers) throws IOException {
-        StringWriter stringWriter = new StringWriter();
-        CSVPrinter printer = new CSVPrinter(stringWriter, CSVFormat.DEFAULT.withHeader("code", "name"));
-            
-        for (Carrier carrier : carriers) {
-            printer.printRecord(carrier.getCode(), carrier.getName());
-        }
+    public String CarriersToString(List<Carrier> carriers) {
+        String csv;
 
-        printer.close();
+        // Header record.
+        csv = "code, name\n";
+
+        for (Carrier carrier : carriers) {
+            csv += carrier.getCode() + ", \"" + carrier.getName() + "\"\n";
+        }
         
-        return stringWriter.toString();
+        return csv;
     }
     
     @Override
-    public String StatisticToString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth) throws IOException {
+    public String StatisticToString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth) {
         List <Statistic> statistics = new ArrayList<>();
         statistics.add(statistic);
         
@@ -58,123 +51,57 @@ public class CsvConverter implements DataConverter {
     }
 
     @Override
-    public String StatisticsToString(List<Statistic> statistics, boolean airport, boolean carrier, boolean yearMonth) throws IOException {
-        StringWriter stringWriter = new StringWriter();
-        
-        List<String> headerColumns = new ArrayList<>();
-        
+    public String StatisticsToString(List<Statistic> statistics, boolean airport, boolean carrier, boolean yearMonth) {
+        String csv = "";
+
+        // Header record.
         if (airport) {
-            headerColumns.add("airportCode");
-            headerColumns.add("airportName");
+            csv += "airportCode, airportName ";
         }
         
         if (carrier) {
-            headerColumns.add("carrierCode");
-            headerColumns.add("carrierName");
+            csv += "carrierCode, carrierName, ";
         }
         
         if (yearMonth) {
-            headerColumns.add("year");
-            headerColumns.add("month");
+            csv += "year, month, ";
         }
         
-        headerColumns.add("cancelledFlightCount");
-        headerColumns.add("onTimeFlightCount");
-        headerColumns.add("delayedFlightCount");
-        headerColumns.add("divertedFlightCount");
-        headerColumns.add("totalFlightCount");
-        headerColumns.add("lateAircraftDelayCount");
-        headerColumns.add("carrierDelayCount");
-        headerColumns.add("weatherDelayCount");
-        headerColumns.add("securityDelayCount");
-        headerColumns.add("nationalAviationSystemDelayCount");
-        headerColumns.add("lateAircraftDelayTime");
-        headerColumns.add("carrierDelayTime");
-        headerColumns.add("weatherDelayTime");
-        headerColumns.add("securityDelayTime");
-        headerColumns.add("nationalAviationSystemDelayTime");
-        headerColumns.add("totalDelayTime");
-
-        String[] header = headerColumns.toArray(new String[0]);
-        
-        CSVPrinter printer = new CSVPrinter(stringWriter, CSVFormat.DEFAULT.withHeader(header));
-        
+        csv += "cancelledFlightCount, onTimeFlightCount, delayedFlightCount, divertedFlightCount, totalFlightCount, "
+             + "lateAircraftDelayCount, carrierDelayCount, weatherDelayCount, securityDelayCount, nationalAviationSystemDelayCount, "
+             + "lateAircraftDelayTime, carrierDelayTime, weatherDelayTime, securityDelayTime, nationalAviationSystemDelayTime, totalDelayTime\n";
+      
+        // Records.
         for (Statistic statistic : statistics) {
             if (airport) {
-                printer.print(statistic.getAirport().getCode());
-                printer.print(statistic.getAirport().getName());
+                csv += statistic.getAirport().getCode() + ", " + statistic.getAirport().getName() + ", ";
             }
             
             if (carrier) {
-                printer.print(statistic.getCarrier().getCode());
-                printer.print(statistic.getCarrier().getName());
+                csv += statistic.getCarrier().getCode() + ", " + statistic.getCarrier().getName() + ", ";
             }
             
             if (yearMonth) {
-                printer.print(statistic.getYearMonth().getYear());
-                printer.print(statistic.getYearMonth().getMonthValue());
+                csv += statistic.getYearMonth().getYear() + ", " + statistic.getYearMonth().getMonthValue() + ", ";;
             }
             
-            if (airport || carrier || yearMonth) {
-                // Write comma after last column.
-                stringWriter.write(",");
-            }
-            
-            printer.printRecord(statistic.getCancelledFlightCount(), statistic.getOnTimeFlightCount(), statistic.getDelayedFlightCount(), statistic.getDivertedFlightCount(), statistic.getTotalFlightCount(),
-                                statistic.getLateAircraftDelayCount(), statistic.getCarrierDelayCount(), statistic.getWeatherDelayCount(), statistic.getSecurityDelayCount(), statistic.getNationalAviationSystemDelayCount(),
-                                statistic.getLateAircraftDelayTime(), statistic.getCarrierDelayTime(), statistic.getWeatherDelayTime(), statistic.getSecurityDelayTime(), statistic.getNationalAviationSystemDelayTime(),
-                                statistic.getTotalDelayTime());
+            csv += statistic.getCancelledFlightCount() + ", " + statistic.getOnTimeFlightCount() + ", " + statistic.getDelayedFlightCount() + ", " + statistic.getDivertedFlightCount() + ", " + statistic.getTotalFlightCount() + ", "
+                 + statistic.getLateAircraftDelayCount() + ", " + statistic.getCarrierDelayCount() + ", " + statistic.getWeatherDelayCount() + ", " + statistic.getSecurityDelayCount() + ", " 
+                 + statistic.getNationalAviationSystemDelayCount() + ", " + statistic.getLateAircraftDelayTime() + ", " + statistic.getCarrierDelayTime() + ", " + statistic.getWeatherDelayTime() + ", "
+                 + statistic.getSecurityDelayTime() + ", " + statistic.getNationalAviationSystemDelayTime() + ", " + statistic.getTotalDelayTime() + "\n";
         }
         
-        printer.close();
-        
-        return stringWriter.toString();
-    }
-    
-    @Override
-    public List<Statistic> StringToStatistics(String statisticData) throws Exception {
-        List<Statistic> statistics = new ArrayList<>();
-        
-        CSVParser csvParser = CSVParser.parse(statisticData, CSVFormat.DEFAULT.withHeader());
-        List<CSVRecord> records = csvParser.getRecords();
-        
-        for (CSVRecord record : records) {
-            Airport airport = new Airport(record.get("airportCode"), record.get("airportName"));
-            Carrier carrier = new Carrier(record.get("carrierCode"), record.get("carrierName"));
-            YearMonth yearMonth = YearMonth.of(Integer.parseInt(record.get("year")), Integer.parseInt(record.get("month")));
-            
-            Statistic statistic = new Statistic(airport, carrier, yearMonth);
-            
-            statistic.setCancelledFlightCount(Integer.parseInt(record.get("cancelledFlightCount")));
-            statistic.setOnTimeFlightCount(Integer.parseInt(record.get("onTimeFlightCount")));
-            statistic.setDelayedFlightCount(Integer.parseInt(record.get("delayedFlightCount")));
-            statistic.setDivertedFlightCount(Integer.parseInt(record.get("divertedFlightCount")));
-            statistic.setTotalFlightCount(Integer.parseInt(record.get("totalFlightCount")));
-
-            statistic.setLateAircraftDelayCount(Integer.parseInt(record.get("lateAircraftDelayCount")));
-            statistic.setWeatherDelayCount(Integer.parseInt(record.get("weatherDelayCount")));
-            statistic.setSecurityDelayCount(Integer.parseInt(record.get("securityDelayCount")));
-            statistic.setNationalAviationSystemDelayCount(Integer.parseInt(record.get("nationalAviationSystemDelayCount")));
-            statistic.setCarrierDelayCount(Integer.parseInt(record.get("carrierDelayCount")));
-
-            statistic.setLateAircraftDelayTime(Integer.parseInt(record.get("lateAircraftDelayTime")));
-            statistic.setWeatherDelayTime(Integer.parseInt(record.get("weatherDelayTime")));
-            statistic.setSecurityDelayTime(Integer.parseInt(record.get("securityDelayTime")));
-            statistic.setNationalAviationSystemDelayTime(Integer.parseInt(record.get("nationalAviationSystemDelayTime")));
-            statistic.setCarrierDelayTime(Integer.parseInt(record.get("carrierDelayTime")));
-            statistic.setTotalDelayTime(Integer.parseInt(record.get("totalDelayTime")));
-            
-            statistics.add(statistic);
-        }
-        
-        return statistics;
+        return csv;
     }
 
     @Override
     public String StatisticToFlightString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth,
                                           boolean cancelledFlightCount, boolean onTimeFlightCount, boolean delayedFlightCount,
                                           boolean divertedFlightCount, boolean totalFlightCount) {
-        // TODO Auto-generated method stub
+        List <Statistic> statistics = new ArrayList<>();
+        statistics.add(statistic);
+
+        return StatisticsToFlightString(statistics, airport, carrier, yearMonth);
         return null;
     }
 
@@ -182,16 +109,53 @@ public class CsvConverter implements DataConverter {
     public String StatisticsToFlightString(List<Statistic> statistics, boolean airport, boolean carrier,
                                            boolean yearMonth, boolean cancelledFlightCount, boolean onTimeFlightCount, boolean delayedFlightCount,
                                            boolean divertedFlightCount, boolean totalFlightCount) {
-        // TODO Auto-generated method stub
-        return null;
+        String csv = "";
+
+        // Header record.
+        if (airport) {
+            csv += "airportCode, airportName ";
+        }
+
+        if (carrier) {
+            csv += "carrierCode, carrierName, ";
+        }
+
+        if (yearMonth) {
+            csv += "year, month, ";
+        }
+
+        csv += "cancelledFlightCount, onTimeFlightCount, delayedFlightCount, divertedFlightCount, totalFlightCount\n";
+
+        // Records.
+        for (Statistic statistic : statistics) {
+            if (airport) {
+                csv += statistic.getAirport().getCode() + ", " + statistic.getAirport().getName() + ", ";
+            }
+
+            if (carrier) {
+                csv += statistic.getCarrier().getCode() + ", " + statistic.getCarrier().getName() + ", ";
+            }
+
+            if (yearMonth) {
+                csv += statistic.getYearMonth().getYear() + ", " + statistic.getYearMonth().getMonthValue() + ", ";;
+            }
+
+            csv += statistic.getCancelledFlightCount() + ", " + statistic.getOnTimeFlightCount() + ", " + statistic.getDelayedFlightCount() + ", "
+                    + statistic.getDivertedFlightCount() + ", " + statistic.getTotalFlightCount() + "\n";
+        }
+
+        return csv;
+
     }
 
     @Override
     public String StatisticToDelayString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth,
                                          boolean lateAircraftDelayCount, boolean carrierDelayCount, boolean weatherDelayCount,
                                          boolean securityDelayCount, boolean nationalAviationSystemDelayCount) {
-        // TODO Auto-generated method stub
-        return null;
+        List <Statistic> statistics = new ArrayList<>();
+        statistics.add(statistic);
+
+        return StatisticsToDelayString(statistics, airport, carrier, yearMonth);
 
     }
 
@@ -199,8 +163,42 @@ public class CsvConverter implements DataConverter {
     public String StatisticsToDelayString(List<Statistic> statistics, boolean airport, boolean carrier,
                                           boolean yearMonth, boolean lateAircraftDelayCount, boolean carrierDelayCount, boolean weatherDelayCount,
                                           boolean securityDelayCount, boolean nationalAviationSystemDelayCount) {
-        // TODO Auto-generated method stub
-        return null;
+        String csv = "";
+
+        // Header record.
+        if (airport) {
+            csv += "airportCode, airportName ";
+        }
+
+        if (carrier) {
+            csv += "carrierCode, carrierName, ";
+        }
+
+        if (yearMonth) {
+            csv += "year, month, ";
+        }
+
+        csv += "lateAircraftDelayCount, carrierDelayCount, weatherDelayCount, securityDelayCount, nationalAviationSystemDelayCount\n";
+
+        // Records.
+        for (Statistic statistic : statistics) {
+            if (airport) {
+                csv += statistic.getAirport().getCode() + ", " + statistic.getAirport().getName() + ", ";
+            }
+
+            if (carrier) {
+                csv += statistic.getCarrier().getCode() + ", " + statistic.getCarrier().getName() + ", ";
+            }
+
+            if (yearMonth) {
+                csv += statistic.getYearMonth().getYear() + ", " + statistic.getYearMonth().getMonthValue() + ", ";;
+            }
+
+            csv += statistic.getLateAircraftDelayCount() + ", " + statistic.getCarrierDelayCount() + ", " + statistic.getWeatherDelayCount() + ", "
+                    + statistic.getSecurityDelayCount() + ", " + statistic.getNationalAviationSystemDelayCount() + "\n";
+        }
+
+        return csv;
     	
 
     }
@@ -212,8 +210,7 @@ public class CsvConverter implements DataConverter {
         List <Statistic> statistics = new ArrayList<>();
         statistics.add(statistic);
         
-        return StatisticsToString(statistics, airport, carrier, yearMonth,lateAircraftDelayCount,carrierDelayCount,
-        		weatherDelayCount,securityDelayCount,nationalAviationSystemDelayCount);
+        return StatisticsToDelayTimeString(statistics, airport, carrier, yearMonth);
     }
 
     @Override
@@ -256,5 +253,47 @@ public class CsvConverter implements DataConverter {
         }
         
         return csv;
+    }
+
+    @Override
+    public String ExtraStatisticsToString(List<ExtraStatistic> extraStatistics, boolean airport1, boolean airport2, boolean carrier) {
+        String csv = "";
+
+        // Header record.
+        if (airport1) {
+            csv += "airportCode, airportName ";
+        }
+
+        if (airport2) {
+            csv += "airportCode, airportName ";
+        }
+
+        if (carrier) {
+            csv += "carrierCode, carrierName, ";
+        }
+
+        csv += "lateAircraftDelaysTimedMean, lateAircraftDelaysTimedMed, lateAircraftDelaysTimedSd, carrierAircraftDelaysTimedMean, carrierAircraftDelaysTimedMed, carrierAircraftDelaysTimedSd\n";
+
+        // Records.
+        for (ExtraStatistic  extraStatistic : extraStatistics) {
+            if (airport1) {
+                csv += extraStatistic.getAirport1().getCode() + ", " + extraStatistic.getAirport1().getName() + ", ";
+            }
+
+            if (airport2) {
+                csv += extraStatistic.getAirport2().getCode() + ", " + extraStatistic.getAirport2().getName() + ", ";
+            }
+
+            if (carrier) {
+                csv += extraStatistic.getCarrier().getCode() + ", " + extraStatistic.getCarrier().getName() + ", ";
+            }
+
+            csv += extraStatistic.getLateAircraftDelaysTimedMean() + ", " + extraStatistic.getLateAircraftDelaysTimedMed() + ", " + extraStatistic.getLateAircraftDelaysTimedSd() + ", "
+                    + extraStatistic.getCarrierAircraftDelaysTimedMean() + ", " + extraStatistic.getCarrierAircraftDelaysTimedMed() + "," + extraStatistic.getCarrierAircraftDelaysTimedSd() + "\n";
+        }
+
+        return csv;
+
+
     }
 }

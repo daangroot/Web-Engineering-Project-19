@@ -7,13 +7,12 @@ import models.Carrier;
 import models.Statistic;
 
 public interface DataConverter {
-    public String AirportsToString(List<Airport> airports) throws Exception;
-    public String CarriersToString(List<Carrier> carriers) throws Exception;
+    public String AirportsToString(List<Airport> airports);
+    public String CarriersToString(List<Carrier> carriers);
     
-    public String StatisticToString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth) throws Exception;
-    public String StatisticsToString(List<Statistic> statistics, boolean airport, boolean carrier, boolean yearMonth) throws Exception;
-    public List<Statistic> StringToStatistics(String statisticData) throws Exception;
-
+    public String StatisticToString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth);
+    public String StatisticsToString(List<Statistic> statistics, boolean airport, boolean carrier, boolean yearMonth);
+    
     public String StatisticToFlightString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth,
                                           boolean cancelledFlightCount, boolean onTimeFlightCount, boolean delayedFlightCount,
                                           boolean divertedFlightCount, boolean totalFlightCount);

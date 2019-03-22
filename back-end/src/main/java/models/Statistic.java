@@ -4,6 +4,8 @@ import java.time.YearMonth;
 
 public class Statistic {
 	private Airport airport;
+	private Airport airport1;
+	private Airport airport2;
 	private Carrier carrier;
 	private YearMonth yearMonth;
 	
@@ -28,6 +30,7 @@ public class Statistic {
 	private int securityDelayTime;
 	private int nationalAviationSystemDelayTime;
 	private int totalDelayTime;
+
 	
 	public Statistic (Airport airport, Carrier carrier, YearMonth yearMonth) {
 		this.airport = airport;
@@ -174,4 +177,5 @@ public class Statistic {
 	public void setTotalDelayTime(int totalDelayTime) {
 		this.totalDelayTime = totalDelayTime;
 	}
+
 }
