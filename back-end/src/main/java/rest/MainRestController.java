@@ -189,16 +189,22 @@ public class MainRestController {
         }
 
 
-        if (year != null && month != null) {
-            YearMonth yearMonth = YearMonth.of(year, month);
-            statistic = databaseConnector.getStatistic(airport, carrier, yearMonth);
-        } else if (year != null) {
-            statistics = databaseConnector.getStatisticsInYear(airport, carrier, year);
-        } else if (month != null) {
-            statistics = databaseConnector.getStatisticsInMonth(airport, carrier, month);
-        } else {
-            statistics = databaseConnector.getStatistics(airport, carrier);
+        try {
+            if (year != null && month != null) {
+                YearMonth yearMonth = YearMonth.of(year, month);
+                statistic = databaseConnector.getStatistic(airport, carrier, yearMonth);
+            } else if (year != null) {
+                statistics = databaseConnector.getStatisticsInYear(airport, carrier, year);
+            } else if (month != null) {
+                statistics = databaseConnector.getStatisticsInMonth(airport, carrier, month);
+            } else {
+                statistics = databaseConnector.getStatistics(airport, carrier);
+            }
+        } catch (SQLException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+
 
 
         try {

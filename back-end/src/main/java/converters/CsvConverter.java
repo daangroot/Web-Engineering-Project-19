@@ -101,8 +101,7 @@ public class CsvConverter implements DataConverter {
         List <Statistic> statistics = new ArrayList<>();
         statistics.add(statistic);
 
-        return StatisticsToFlightString(statistics, airport, carrier, yearMonth);
-        return null;
+        return StatisticsToFlightString(statistics, airport, carrier, yearMonth, cancelledFlightCount, onTimeFlightCount, delayedFlightCount, divertedFlightCount, totalFlightCount);
     }
 
     @Override
@@ -155,7 +154,7 @@ public class CsvConverter implements DataConverter {
         List <Statistic> statistics = new ArrayList<>();
         statistics.add(statistic);
 
-        return StatisticsToDelayString(statistics, airport, carrier, yearMonth);
+        return StatisticsToDelayString(statistics, airport, carrier, yearMonth, lateAircraftDelayCount, carrierDelayCount, weatherDelayCount, securityDelayCount, nationalAviationSystemDelayCount);
 
     }
 
@@ -210,7 +209,7 @@ public class CsvConverter implements DataConverter {
         List <Statistic> statistics = new ArrayList<>();
         statistics.add(statistic);
         
-        return StatisticsToDelayTimeString(statistics, airport, carrier, yearMonth);
+        return StatisticsToDelayTimeString(statistics, airport, carrier, yearMonth, lateAircraftDelayTime, carrierDelayTime, weatherDelayTime, securityDelayTime, nationalAviationSystemDelayTime, totalDelayTime);
     }
 
     @Override

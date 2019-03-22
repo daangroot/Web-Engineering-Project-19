@@ -4,6 +4,7 @@ import java.util.List;
 
 import models.Airport;
 import models.Carrier;
+import models.ExtraStatistic;
 import models.Statistic;
 
 public interface DataConverter {
@@ -33,4 +34,6 @@ public interface DataConverter {
     public String StatisticsToDelayTimeString(List<Statistic> statistics, boolean airport, boolean carrier, boolean yearMonth,
                                               boolean lateAircraftDelayTime, boolean carrierDelayTime, boolean weatherDelayTime,
                                               boolean securityDelayTime, boolean nationalAviationSystemDelayTime, boolean totalDelayTime);
+
+    public String ExtraStatisticsToString(List<ExtraStatistic> extraStatistics, boolean airport1, boolean airport2, boolean carrier);
 }

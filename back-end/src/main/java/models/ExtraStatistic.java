@@ -33,7 +33,7 @@ public class ExtraStatistic {
         return carrier;
     }
 
-    public int getLateAircraftDelaysTimedMean() {
+    public double getLateAircraftDelaysTimedMean() {
         return lateAircraftDelaysTimedMean;
     }
 
@@ -41,7 +41,7 @@ public class ExtraStatistic {
         this.lateAircraftDelaysTimedMean = lateAircraftDelaysTimedMean;
     }
 
-    public int getLateAircraftDelaysTimedMed() {
+    public double getLateAircraftDelaysTimedMed() {
         return lateAircraftDelaysTimedMed;
     }
 
@@ -49,7 +49,7 @@ public class ExtraStatistic {
         this.lateAircraftDelaysTimedMed = lateAircraftDelaysTimedMed;
     }
 
-    public int getLateAircraftDelaysTimedSd() {
+    public double getLateAircraftDelaysTimedSd() {
         return lateAircraftDelaysTimedSd;
     }
 
@@ -57,7 +57,7 @@ public class ExtraStatistic {
         this.lateAircraftDelaysTimedSd = lateAircraftDelaysTimedSd;
     }
 
-    public int getCarrierAircraftDelaysTimedMean() {
+    public double getCarrierAircraftDelaysTimedMean() {
         return carrierAircraftDelaysTimedMean;
     }
 
@@ -65,7 +65,7 @@ public class ExtraStatistic {
         this.carrierAircraftDelaysTimedMean = carrierAircraftDelaysTimedMean;
     }
 
-    public int getCarrierAircraftDelaysTimedMed() {
+    public double getCarrierAircraftDelaysTimedMed() {
         return carrierAircraftDelaysTimedMed;
     }
 
@@ -73,7 +73,7 @@ public class ExtraStatistic {
         this.carrierAircraftDelaysTimedMed = carrierAircraftDelaysTimedMed;
     }
 
-    public int getCarrierAircraftDelaysTimedSd() {
+    public double getCarrierAircraftDelaysTimedSd() {
         return carrierAircraftDelaysTimedSd;
     }
 

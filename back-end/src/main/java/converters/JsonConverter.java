@@ -152,9 +152,11 @@ public class JsonConverter implements DataConverter {
             if (!totalFlightCount) {
                 jsonObject.remove("totalFlightCount");
             }
-            return jsonObject.toString();
 
+            jsonArray.add(jsonObject);
         }
+
+        return jsonArray.toString();
     }
 
     @Override
@@ -238,9 +240,11 @@ public class JsonConverter implements DataConverter {
             if (!nationalAviationSystemDelayCount) {
                 jsonObject.remove("nationalAviationSystemDelayCount");
             }
-            return jsonObject.toString();
 
+            jsonArray.add(jsonObject);
         }
+
+        return jsonArray.toString();
     }
 
     @Override
@@ -282,7 +286,7 @@ public class JsonConverter implements DataConverter {
         }
 
         if (!totalDelayTime) {
-            jsonObject.remove("totalDelayTime")
+            jsonObject.remove("totalDelayTime");
         }
 
         return jsonObject.toString();
@@ -331,7 +335,7 @@ public class JsonConverter implements DataConverter {
             }
 
             if (!totalDelayTime) {
-                jsonObject.remove("totalDelayTime")
+                jsonObject.remove("totalDelayTime");
             }
         }
 
