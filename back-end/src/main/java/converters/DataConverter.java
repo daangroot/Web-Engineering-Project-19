@@ -2,7 +2,6 @@ package converters;
 
 import models.*;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface DataConverter {

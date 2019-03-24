@@ -23,8 +23,6 @@ public class JsonDataImporter {
         List<Airport> airports = new ArrayList<>();
         List<Carrier> carriers = new ArrayList<>();
         List<Statistic> stats = new ArrayList<>();
-        List<Integer> lateAircraftDelayTimesArray = new ArrayList<Integer>();
-        List<Integer> carrierDelayTimesArray = new ArrayList<Integer>();
 
         final String filePath = "C:\\\\Users\\Daan\\Downloads\\airlines.json";
         BufferedReader bufferedReader = null;
@@ -98,17 +96,6 @@ public class JsonDataImporter {
             Statistic statistic = new Statistic(airport, carrier, year, month, flightData, delayData, delayTimeData);
 
             stats.add(statistic);
-            /*
-            lateAircraftDelayTimesArray.add(lateAircraftDelayTime);
-            carrierDelayTimesArray.add(carrierDelayTime);
-
-            ExtraStatistic extraStatistic = new ExtraStatistic(airport, airport, carrier);
-            extraStatistic.setLateAircraftTimeMean(mean((ArrayList<Integer>) lateAircraftDelayTimesArray));
-            extraStatistic.setLateAircraftTimeMedian(median((ArrayList<Integer>) lateAircraftDelayTimesArray));
-            extraStatistic.setLateAircraftTimeSd(standardDeviation((ArrayList<Integer>) lateAircraftDelayTimesArray));
-            extraStatistic.setCarrierTimeMean(mean((ArrayList<Integer>) carrierDelayTimesArray));
-            extraStatistic.setCarrierTimeMedian(median((ArrayList<Integer>) carrierDelayTimesArray));
-            extraStatistic.setCarrierTimeMedian(standardDeviation((ArrayList<Integer>) carrierDelayTimesArray));*/
         }
 
         for (Map.Entry<String, String> item : airportsMap.entrySet()) {
@@ -129,50 +116,5 @@ public class JsonDataImporter {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public static double median(ArrayList<Integer> values){
-        Arrays.sort(new ArrayList[]{values});
-        double median;
-        // get count of scores
-        int totalElements = values.size();
-        // check if total number of scores is even
-        if (totalElements % 2 == 0) {
-            int sumOfMiddleElements = values.get(totalElements / 2) + values.get(totalElements / 2 - 1);
-            // calculate average of middle elements
-            median = ((double) sumOfMiddleElements) / 2;
-        } else {
-            // get the middle element
-            median = (double) values.get(values.size() / 2);
-        }
-        return median;
-    }
-
-    public static double mean(ArrayList<Integer> values){
-        double mean;
-        int sum = 0, i;
-        for(double num : values) {
-            sum+= num;
-        }
-        mean = sum/values.size();
-        return mean;
-    }
-
-    public static double standardDeviation(ArrayList<Integer> values)
-    {
-        double sum = 0.0, standardDeviation = 0.0;
-        int length = values.size();
-
-        for(double num : values) {
-            sum += num;
-        }
-
-        double mean = sum/length;
-
-        for(double num: values) {
-            standardDeviation += Math.pow(num - mean, 2);
-        }
-
-        return Math.sqrt(standardDeviation/length);
     }
 }
