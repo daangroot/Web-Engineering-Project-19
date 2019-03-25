@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import converters.StatisticDataSelectorHelper;
-import models.ExtraStatistic;
+import models.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import converters.CsvConverter;
 import converters.JsonConverter;
-import models.Airport;
-import models.Carrier;
-import models.Statistic;
 import database.DatabaseConnector;
 
 @RestController
@@ -25,6 +22,7 @@ public class MainRestController {
     private DatabaseConnector databaseConnector;
     private JsonConverter jsonConverter;
     private CsvConverter csvConverter;
+    private final String URI = "http://http://94.212.164.28:8080/";
 
     public MainRestController() {
         try {
@@ -95,7 +93,8 @@ public class MainRestController {
 
     private ResponseEntity<String> createGetStatisticsResponse(String airportCode, String carrierCode, Integer year,
                                                                Integer month, String acceptHeader,
-                                                               StatisticDataSelectorHelper dataSelector) {
+                                                               StatisticDataSelectorHelper dataSelector,
+                                                               List<Link> links) {
         String responseBody;
 
         Airport airport = null;
@@ -164,7 +163,7 @@ public class MainRestController {
         if (acceptHeader.equals("text/csv")) {
             responseHeaders.set("Content-Type", "text/csv");
             try {
-                responseBody = csvConverter.StatisticsToString(statistics, dataSelector);
+                responseBody = csvConverter.statisticsToString(statistics, dataSelector);
             } catch (IOException e) {
                 e.printStackTrace();
                 responseBody = "Something went wrong!";
@@ -172,7 +171,8 @@ public class MainRestController {
             }
         } else {
             responseHeaders.set("Content-Type", "application/json");
-            responseBody = jsonConverter.StatisticsToString(statistics, dataSelector);
+            String json = jsonConverter.statisticsToString(statistics, dataSelector);
+            responseBody = jsonConverter.mergeLinksAndJson(links, json);
         }
 
         return new ResponseEntity<>(responseBody, responseHeaders, HttpStatus.OK);
@@ -187,6 +187,21 @@ public class MainRestController {
         Airport airport2 = new Airport(airportCode2, null);
         Carrier carrier = (carrierCode == null) ? null : new Carrier(carrierCode, null);
 
+        if (!databaseConnector.hasAirport(airport1)) {
+            responseBody = "Airport with code " + airportCode1 + " does not exist!";
+            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+        }
+
+        if (!databaseConnector.hasAirport(airport2)) {
+            responseBody = "Airport with code " + airportCode2 + " does not exist!";
+            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+        }
+
+        if (carrier != null && !databaseConnector.hasCarrier(carrier)) {
+            responseBody = "Carrier with code " + carrierCode + " does not exist!";
+            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+        }
+
         List<ExtraStatistic> extraStatistics;
 
         try {
@@ -200,7 +215,7 @@ public class MainRestController {
         if (acceptHeader.equals("text/csv")) {
             responseHeaders.set("Content-Type", "text/csv");
             try {
-                responseBody = csvConverter.ExtraStatisticsToString(extraStatistics, carrierCode == null);
+                responseBody = csvConverter.extraStatisticsToString(extraStatistics, carrierCode == null);
             } catch (IOException e) {
                 e.printStackTrace();
                 responseBody = "Something went wrong!";
@@ -208,8 +223,22 @@ public class MainRestController {
             }
         } else {
             responseHeaders.set("Content-Type", "application/json");
-            responseBody = jsonConverter.ExtraStatisticsToString(extraStatistics, carrierCode == null);
+            responseBody = jsonConverter.extraStatisticsToString(extraStatistics, carrierCode == null);
         }
+
+        return new ResponseEntity<>(responseBody, responseHeaders, HttpStatus.OK);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<String> getRoot() {
+        ArrayList<Link> links = new ArrayList<>();
+
+        links.add(new Link(URI + "airports/", "airports", "GET"));
+        links.add(new Link(URI + "carriers/", "carriers", "GET"));
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Content-Type", "application/json");
+        String responseBody = jsonConverter.mergeLinksAndJson(links, null);
 
         return new ResponseEntity<>(responseBody, responseHeaders, HttpStatus.OK);
     }
@@ -231,7 +260,7 @@ public class MainRestController {
         if (mediaType.equals("text/csv")) {
             responseHeaders.set("Content-Type", "text/csv");
             try {
-                responseBody = csvConverter.AirportsToString(airports);
+                responseBody = csvConverter.airportsToString(airports);
             } catch (IOException e) {
                 e.printStackTrace();
                 responseBody = "Something went wrong!";
@@ -239,7 +268,12 @@ public class MainRestController {
             }
         } else {
             responseHeaders.set("Content-Type", "application/json");
-            responseBody = jsonConverter.AirportsToString(airports);
+            String jsonAirports = jsonConverter.airportsToStringWithLinks(airports, URI + "airports/");
+
+            List<Link> links = new ArrayList<>();
+            links.add(new Link(URI + "airports/carriers", "stats", "POST"));
+
+            responseBody = jsonConverter.mergeLinksAndJson(links, jsonAirports);
         }
 
         return new ResponseEntity<>(responseBody, responseHeaders, HttpStatus.OK);
@@ -262,19 +296,57 @@ public class MainRestController {
         if (mediaType.equals("text/csv")) {
             responseHeaders.set("Content-Type", "text/csv");
             try {
-                responseBody = csvConverter.CarriersToString(carriers);
+                responseBody = csvConverter.carriersToString(carriers);
             } catch (IOException e) {
                 e.printStackTrace();
                 responseBody = "Something went wrong!";
                 return new ResponseEntity<>(responseBody, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
-            responseBody = jsonConverter.CarriersToString(carriers);
             responseHeaders.set("Content-Type", "application/json");
+            String jsonCarriers = jsonConverter.carriersToString(carriers);
+            responseBody = jsonConverter.mergeLinksAndJson(null, jsonCarriers);
         }
 
         return new ResponseEntity<>(responseBody, responseHeaders, HttpStatus.OK);
     }
+
+    @GetMapping("/airports/{airportCode}")
+    public ResponseEntity<String> getAirport(@PathVariable String airportCode) {
+        String responseBody;
+        HttpHeaders responseHeaders = new HttpHeaders();
+
+        if (!databaseConnector.hasAirport(new Airport(airportCode, null))) {
+            responseBody = "Airport with code " + airportCode + " does not exist!";
+            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+        }
+
+        ArrayList<Link> links = new ArrayList<>();
+
+        String baseHref = URI + "airports/" + airportCode + "/";
+        links.add(new Link(baseHref + "carriers/", "carriers", "GET"));
+
+        List<Airport> airports;
+        try {
+            airports = databaseConnector.getAirports();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            responseBody = "Something went wrong!";
+            return new ResponseEntity<>(responseBody, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        for (Airport airport : airports) {
+            if (!airport.getCode().equals(airportCode)) {
+                links.add(new Link(baseHref + airport.getCode() + "/", "airport", "GET"));
+            }
+        }
+
+        responseHeaders.set("Content-Type", "application/json");
+        responseBody = jsonConverter.mergeLinksAndJson(links, null);
+
+        return new ResponseEntity<>(responseBody, responseHeaders, HttpStatus.OK);
+    }
+
 
     @GetMapping("/airports/{airportCode}/carriers")
     public ResponseEntity<String> getCarriersAtAirport(@PathVariable String airportCode,
@@ -283,15 +355,12 @@ public class MainRestController {
         String responseBody;
 
         Airport airport = new Airport(airportCode, null);
-
-
-        List<Carrier> carriers;
-
         if (!databaseConnector.hasAirport(airport)) {
             responseBody = "Airport with code " + airportCode + " does not exist!";
             return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
         }
 
+        List<Carrier> carriers;
         try {
             carriers = databaseConnector.getCarriersAtAirport(airport);
         } catch (SQLException e) {
@@ -303,7 +372,7 @@ public class MainRestController {
         if (mediaType.equals("text/csv")) {
             responseHeaders.set("Content-Type", "text/csv");
             try {
-                responseBody = csvConverter.CarriersToString(carriers);
+                responseBody = csvConverter.carriersToString(carriers);
             } catch (IOException e) {
                 e.printStackTrace();
                 responseBody = "Something went wrong!";
@@ -311,8 +380,26 @@ public class MainRestController {
             }
         } else {
             responseHeaders.set("Content-Type", "application/json");
-            responseBody = jsonConverter.CarriersToString(carriers);
+            String baseHref = URI + "airports/" + airportCode + "/carriers/";
+            String jsonCarriers = jsonConverter.carriersToStringWithLinks(carriers, baseHref);
+            responseBody = jsonConverter.mergeLinksAndJson(null, jsonCarriers);
         }
+
+        return new ResponseEntity<>(responseBody, responseHeaders, HttpStatus.OK);
+    }
+
+    @GetMapping("/airports/{airportCode}/carriers/{carrierCode}")
+    public ResponseEntity<String> getAirportCarrier(@PathVariable String airportCode, @PathVariable String carrierCode) {
+        ArrayList<Link> links = new ArrayList<>();
+
+        String baseHref = URI + "airports/" + airportCode + "/carriers/" + carrierCode + "/";
+        links.add(new Link(baseHref + "stats/", "stats", "GET"));
+        links.add(new Link(baseHref + "stats/", "stats", "PUT"));
+        links.add(new Link(baseHref + "stats/", "stats", "DELETE"));
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Content-Type", "application/json");
+        String responseBody = jsonConverter.mergeLinksAndJson(links, null);
 
         return new ResponseEntity<>(responseBody, responseHeaders, HttpStatus.OK);
     }
@@ -327,7 +414,12 @@ public class MainRestController {
         dataSelector.setDelayDataTrue();
         dataSelector.setDelayDataTimeTrue();
 
-        return createGetStatisticsResponse(airportCode, carrierCode, year, month, acceptHeader, dataSelector);
+        List<Link> links = new ArrayList<>();
+        String baseHref = URI + "airports/" + airportCode + "/carriers/" + carrierCode + "/stats/";
+        links.add(new Link(baseHref + "flight/", "flight", "GET"));
+        links.add(new Link(baseHref + "delay-time/", "delay-time", "GET"));
+
+        return createGetStatisticsResponse(airportCode, carrierCode, year, month, acceptHeader, dataSelector, links);
     }
 
 
@@ -339,7 +431,7 @@ public class MainRestController {
 
         if (mediaType.equals("text/csv")) {
             try {
-                statistics = csvConverter.StringToStatistics(data, null, null, null, null);
+                statistics = csvConverter.stringToStatistics(data, null, null, null, null);
             } catch (Exception e) {
                 e.printStackTrace();
                 responseBody = "Syntax error in CSV string.";
@@ -347,7 +439,7 @@ public class MainRestController {
             }
         } else {
             try {
-                statistics = jsonConverter.StringToStatistics(data, null, null, null, null);
+                statistics = jsonConverter.stringToStatistics(data, null, null, null, null);
             } catch (Exception e) {
                 e.printStackTrace();
                 responseBody = "Syntax error in JSON string.";
@@ -422,7 +514,7 @@ public class MainRestController {
 
         if (mediaType.equals("text/csv")) {
             try {
-                statistics = csvConverter.StringToStatistics(data, airport, carrier, year, month);
+                statistics = csvConverter.stringToStatistics(data, airport, carrier, year, month);
             } catch (Exception e) {
                 e.printStackTrace();
                 responseBody = "Syntax error in CSV string.";
@@ -430,7 +522,7 @@ public class MainRestController {
             }
         } else {
             try {
-                statistics = jsonConverter.StringToStatistics(data, airport, carrier, year, month);
+                statistics = jsonConverter.stringToStatistics(data, airport, carrier, year, month);
             } catch (Exception e) {
                 e.printStackTrace();
                 responseBody = "Syntax error in JSON string.";
@@ -519,24 +611,7 @@ public class MainRestController {
         StatisticDataSelectorHelper dataSelector = initializeDataSelector(false, false, year, month, null);
         dataSelector.setFlightData(true, true, true, false, false);
 
-        return createGetStatisticsResponse(airportCode, carrierCode, year, month, acceptHeader, dataSelector);
-    }
-
-    @GetMapping("/airports/{airportCode}/carriers/{carrierCode}/stats/delay-time")
-    public ResponseEntity<String> getDelayTime(@PathVariable String airportCode, @PathVariable String carrierCode,
-                                               @RequestParam(value = "type", required = false)
-                                                       List<String> delayTypes,
-                                               @RequestParam(value = "year", required = false) Integer year,
-                                               @RequestParam(value = "month", required = false) Integer month,
-                                               @RequestHeader("Accept") String acceptHeader) {
-        if (delayTypes == null) {
-            delayTypes = new ArrayList<>();
-        }
-
-        StatisticDataSelectorHelper dataSelector = initializeDataSelector(false, false, year, month,
-                delayTypes);
-
-        return createGetStatisticsResponse(airportCode, carrierCode, year, month, acceptHeader, dataSelector);
+        return createGetStatisticsResponse(airportCode, carrierCode, year, month, acceptHeader, dataSelector, null);
     }
 
     @GetMapping("/airports/carriers/{carrierCode}/stats/delay-time")
@@ -553,7 +628,133 @@ public class MainRestController {
         StatisticDataSelectorHelper dataSelector = initializeDataSelector(true, false, year, month,
                 delayTypes);
 
-        return createGetStatisticsResponse(null, carrierCode, year, month, acceptHeader, dataSelector);
+        return createGetStatisticsResponse(null, carrierCode, year, month, acceptHeader, dataSelector, null);
+    }
+
+    @GetMapping("/airports/{airportCode}/carriers/{carrierCode}/stats/delay-time")
+    public ResponseEntity<String> getDelayTime(@PathVariable String airportCode, @PathVariable String carrierCode,
+                                               @RequestParam(value = "type", required = false)
+                                                       List<String> delayTypes,
+                                               @RequestParam(value = "year", required = false) Integer year,
+                                               @RequestParam(value = "month", required = false) Integer month,
+                                               @RequestHeader("Accept") String acceptHeader) {
+        if (delayTypes == null) {
+            delayTypes = new ArrayList<>();
+        }
+
+        StatisticDataSelectorHelper dataSelector = initializeDataSelector(false, false, year, month,
+                delayTypes);
+
+        return createGetStatisticsResponse(airportCode, carrierCode, year, month, acceptHeader, dataSelector, null);
+    }
+
+    @GetMapping("/airports/{airportCode1}/{airportCode2}")
+    public ResponseEntity<String> get2Airports(@PathVariable String airportCode1, @PathVariable String airportCode2) {
+        String responseBody;
+        HttpHeaders responseHeaders = new HttpHeaders();
+
+        Airport airport1 = new Airport(airportCode1, null);
+        if (!databaseConnector.hasAirport(airport1)) {
+            responseBody = "Airport with code " + airportCode1 + " does not exist!";
+            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+        }
+
+        Airport airport2 = new Airport(airportCode2, null);
+        if (!databaseConnector.hasAirport(airport2)) {
+            responseBody = "Airport with code " + airportCode2 + " does not exist!";
+            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+        }
+
+        ArrayList<Link> links = new ArrayList<>();
+
+        String baseHref = URI + "airports/" + airportCode1 + "/" + airportCode2 + "/";
+        links.add(new Link(baseHref + "carriers/", "carriers", "GET"));
+
+        responseHeaders.set("Content-Type", "application/json");
+        responseBody = jsonConverter.mergeLinksAndJson(links, null);
+
+        return new ResponseEntity<>(responseBody, responseHeaders, HttpStatus.OK);
+    }
+
+    @GetMapping("/airports/{airportCode1}/{airportCode2}/carriers")
+    public ResponseEntity<String> get2AirportsCarriers(@PathVariable String airportCode1,
+                                                       @PathVariable String airportCode2) {
+        String responseBody;
+        HttpHeaders responseHeaders = new HttpHeaders();
+
+        Airport airport1 = new Airport(airportCode1, null);
+        if (!databaseConnector.hasAirport(airport1)) {
+            responseBody = "Airport with code " + airportCode1 + " does not exist!";
+            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+        }
+
+        Airport airport2 = new Airport(airportCode2, null);
+        if (!databaseConnector.hasAirport(airport2)) {
+            responseBody = "Airport with code " + airportCode2 + " does not exist!";
+            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+        }
+
+        ArrayList<Link> links = new ArrayList<>();
+        String baseHref = URI + "airports/" + airportCode1 + "/" + airportCode2 + "/carriers/";
+        links.add(new Link(baseHref + "extra-stats/", "extra-stats", "GET"));
+
+        List<Carrier> carriers;
+        try {
+            carriers = databaseConnector.getCarriers();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            responseBody = "Something went wrong!";
+            return new ResponseEntity<>(responseBody, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        responseHeaders.set("Content-Type", "application/json");
+        String jsonCarriers = jsonConverter.carriersToStringWithLinks(carriers, baseHref);
+        responseBody = jsonConverter.mergeLinksAndJson(links, jsonCarriers);
+
+        return new ResponseEntity<>(responseBody, responseHeaders, HttpStatus.OK);
+    }
+
+    @GetMapping("/airports/{airportCode1}/{airportCode2}/carriers/{carrierCode}")
+    public ResponseEntity<String> get2AirportsCarrier(@PathVariable String airportCode1,
+                                                      @PathVariable String airportCode2,
+                                                      @PathVariable String carrierCode) {
+        String responseBody;
+        HttpHeaders responseHeaders = new HttpHeaders();
+
+        Airport airport1 = new Airport(airportCode1, null);
+        if (!databaseConnector.hasAirport(airport1)) {
+            responseBody = "Airport with code " + airportCode1 + " does not exist!";
+            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+        }
+
+        Airport airport2 = new Airport(airportCode2, null);
+        if (!databaseConnector.hasAirport(airport2)) {
+            responseBody = "Airport with code " + airportCode2 + " does not exist!";
+            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+        }
+
+        Carrier carrier = new Carrier(carrierCode, null);
+        if (!databaseConnector.hasCarrier(carrier)) {
+            responseBody = "Carrier with code " + carrierCode + " does not exist!";
+            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+        }
+
+        ArrayList<Link> links = new ArrayList<>();
+
+        String baseHref = URI + "airports/" + airportCode1 + "/" + airportCode2 + "/carriers/" + carrierCode + "/";
+        links.add(new Link(baseHref + "extra-stats/", "extra-stats", "GET"));
+
+        responseHeaders.set("Content-Type", "application/json");
+        responseBody = jsonConverter.mergeLinksAndJson(links, null);
+
+        return new ResponseEntity<>(responseBody, responseHeaders, HttpStatus.OK);
+    }
+
+    @GetMapping("/airports/{airportCode1}/{airportCode2}/carriers/extra-stats")
+    public ResponseEntity<String> getExtraStats(@PathVariable String airportCode1,
+                                                @PathVariable String airportCode2,
+                                                @RequestHeader("Accept") String acceptHeader) {
+        return createGetExtraStatisticsResponse(airportCode1, airportCode2, null, acceptHeader);
     }
 
     @GetMapping("/airports/{airportCode1}/{airportCode2}/carriers/{carrierCode}/extra-stats")
@@ -562,12 +763,5 @@ public class MainRestController {
                                                 @PathVariable(required = false) String carrierCode,
                                                 @RequestHeader("Accept") String acceptHeader) {
         return createGetExtraStatisticsResponse(airportCode1, airportCode2, carrierCode, acceptHeader);
-    }
-
-    @GetMapping("/airports/{airportCode1}/{airportCode2}/carriers/extra-stats")
-    public ResponseEntity<String> getExtraStats(@PathVariable String airportCode1,
-                                                @PathVariable String airportCode2,
-                                                @RequestHeader("Accept") String acceptHeader) {
-        return createGetExtraStatisticsResponse(airportCode1, airportCode2, null, acceptHeader);
     }
 }

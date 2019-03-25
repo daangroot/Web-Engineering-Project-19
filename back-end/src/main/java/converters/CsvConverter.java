@@ -17,7 +17,7 @@ public class CsvConverter implements DataConverter {
     }
 
     @Override
-    public String AirportsToString(List<Airport> airports) throws IOException {
+    public String airportsToString(List<Airport> airports) throws IOException {
         StringWriter stringWriter = new StringWriter();
         CSVPrinter csvPrinter = new CSVPrinter(stringWriter, CSVFormat.DEFAULT.withHeader("code", "name"));
 
@@ -31,7 +31,7 @@ public class CsvConverter implements DataConverter {
     }
 
     @Override
-    public String CarriersToString(List<Carrier> carriers) throws IOException {
+    public String carriersToString(List<Carrier> carriers) throws IOException {
         StringWriter stringWriter = new StringWriter();
         CSVPrinter csvPrinter = new CSVPrinter(stringWriter, CSVFormat.DEFAULT.withHeader("code", "name"));
 
@@ -45,7 +45,7 @@ public class CsvConverter implements DataConverter {
     }
 
     @Override
-    public String StatisticsToString(List<Statistic> statistics, StatisticDataSelectorHelper includedData) throws IOException {
+    public String statisticsToString(List<Statistic> statistics, StatisticDataSelectorHelper includedData) throws IOException {
         StringWriter stringWriter = new StringWriter();
 
         List<String> headerColumns = new ArrayList<>();
@@ -246,7 +246,7 @@ public class CsvConverter implements DataConverter {
     }
 
     @Override
-    public List<Statistic> StringToStatistics(String statisticData, Airport airport, Carrier carrier, Integer year,
+    public List<Statistic> stringToStatistics(String statisticData, Airport airport, Carrier carrier, Integer year,
                                               Integer month) throws Exception {
         List<Statistic> statistics = new ArrayList<>();
 
@@ -309,7 +309,7 @@ public class CsvConverter implements DataConverter {
     }
 
     @Override
-    public String ExtraStatisticsToString(List<ExtraStatistic> extraStatistics, boolean withCarrier)
+    public String extraStatisticsToString(List<ExtraStatistic> extraStatistics, boolean withCarrier)
             throws IOException {
         StringWriter stringWriter = new StringWriter();
 

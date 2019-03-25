@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.gson.*;
 import models.*;
+import rest.MainRestController;
 
 public class JsonConverter implements DataConverter {
     private Gson gson;
@@ -14,17 +15,57 @@ public class JsonConverter implements DataConverter {
     }
 
     @Override
-    public String AirportsToString(List<Airport> airports) {
+    public String airportsToString(List<Airport> airports) {
         return gson.toJson(airports);
     }
 
-    @Override
-    public String CarriersToString(List<Carrier> carriers) {
-        return gson.toJson(carriers);
+    public String airportsToStringWithLinks(List<Airport> airports, String baseHref) {
+        JsonArray jsonArray = new JsonArray();
+
+        for (Airport airport : airports) {
+            JsonObject jsonObject = new JsonObject();
+
+            jsonObject.add("airport", gson.toJsonTree(airport));
+
+            Link link = new Link(baseHref + airport.getCode() + "/", "airport", "GET");
+            List<Link> links = new ArrayList<>();
+            links.add(link);
+
+            jsonObject.add("links", gson.toJsonTree(links));
+
+            jsonArray.add(jsonObject);
+        }
+
+        return jsonArray.toString();
     }
 
     @Override
-    public String StatisticsToString(List<Statistic> statistics, StatisticDataSelectorHelper includedData) {
+    public String carriersToString(List<Carrier> carriers) {
+        return gson.toJson(carriers);
+    }
+
+    public String carriersToStringWithLinks(List<Carrier> carriers, String baseHref) {
+        JsonArray jsonArray = new JsonArray();
+
+        for (Carrier carrier : carriers) {
+            JsonObject jsonObject = new JsonObject();
+
+            jsonObject.add("carrier", gson.toJsonTree(carrier));
+
+            Link link = new Link(baseHref + carrier.getCode() + "/", "carrier", "GET");
+            List<Link> links = new ArrayList<>();
+            links.add(link);
+
+            jsonObject.add("links", gson.toJsonTree(links));
+
+            jsonArray.add(jsonObject);
+        }
+
+        return jsonArray.toString();
+    }
+
+    @Override
+    public String statisticsToString(List<Statistic> statistics, StatisticDataSelectorHelper includedData) {
         JsonArray jsonArray = new JsonArray();
 
         for (Statistic statistic : statistics) {
@@ -142,7 +183,7 @@ public class JsonConverter implements DataConverter {
     }
 
     @Override
-    public List<Statistic> StringToStatistics(String statisticsData, Airport airport, Carrier carrier, Integer year,
+    public List<Statistic> stringToStatistics(String statisticsData, Airport airport, Carrier carrier, Integer year,
                                               Integer month) {
         List<Statistic> statistics = new ArrayList<>();
         JsonArray jsonArray = gson.fromJson(statisticsData, JsonArray.class);
@@ -188,7 +229,7 @@ public class JsonConverter implements DataConverter {
     }
 
     @Override
-    public String ExtraStatisticsToString(List<ExtraStatistic> extraStatistics, boolean withCarrier) {
+    public String extraStatisticsToString(List<ExtraStatistic> extraStatistics, boolean withCarrier) {
         JsonArray jsonArray = new JsonArray();
 
         for (ExtraStatistic extraStatistic : extraStatistics) {
@@ -210,5 +251,30 @@ public class JsonConverter implements DataConverter {
         }
 
         return jsonArray.toString();
+    }
+/*
+    public String linksToString(List<Link> links) {
+        JsonArray jsonLinks = gson.toJsonTree(links).getAsJsonArray();
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("links", jsonLinks);
+
+        return jsonObject.toString();
+    }
+*/
+    public String mergeLinksAndJson(List<Link> links, String json) {
+        JsonObject jsonObject = new JsonObject();
+
+        if (json != null) {
+            JsonElement jsonElement = gson.fromJson(json, JsonElement.class);
+            jsonObject.add("content", jsonElement);
+        }
+
+        if (links != null) {
+            JsonArray jsonLinks = gson.toJsonTree(links).getAsJsonArray();
+            jsonObject.add("links", jsonLinks);
+        }
+
+        return jsonObject.toString();
     }
 }
