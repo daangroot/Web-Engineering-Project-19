@@ -22,7 +22,7 @@ public class MainRestController {
     private DatabaseConnector databaseConnector;
     private JsonConverter jsonConverter;
     private CsvConverter csvConverter;
-    private final String URI = "http://http://94.212.164.28:8080/";
+    private final String URI = "http://94.212.164.28:8080/";
 
     public MainRestController() {
         try {
