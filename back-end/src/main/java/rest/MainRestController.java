@@ -37,7 +37,7 @@ public class MainRestController {
     }
 
     private StatisticDataSelectorHelper initializeDataSelector(boolean withAirport, boolean withCarrier, Integer year,
-                                                               Integer month, List<String> delayTypes) {
+                                                               Integer month, List<String> delayTimeTypes) {
         StatisticDataSelectorHelper dataSelector;
 
         if (month != null && year != null) {
@@ -50,10 +50,10 @@ public class MainRestController {
             dataSelector = new StatisticDataSelectorHelper(withAirport, withCarrier, true, true);
         }
 
-        if (delayTypes != null && delayTypes.isEmpty()) {
+        if (delayTimeTypes != null && delayTimeTypes.isEmpty()) {
             // No reasons given, select all reasons.
-            dataSelector.setDelayTimeData(true, true, true, true, true, true);
-        } else if (delayTypes != null) {
+            dataSelector.setDelayDataTimeTrue();
+        } else if (delayTimeTypes != null) {
             boolean lateAircraftTime = false;
             boolean carrierTime = false;
             boolean weatherTime = false;
@@ -61,7 +61,7 @@ public class MainRestController {
             boolean nationalAviationSystemTime = false;
             boolean totalTime = false;
 
-            for (String delayReason : delayTypes) {
+            for (String delayReason : delayTimeTypes) {
                 switch (delayReason) {
                     case "late-aircraft":
                         lateAircraftTime = true;
@@ -84,8 +84,14 @@ public class MainRestController {
                 }
             }
 
-            dataSelector.setDelayTimeData(lateAircraftTime, carrierTime, weatherTime, securityTime,
+            if (!lateAircraftTime && !carrierTime && !weatherTime && !securityTime && !nationalAviationSystemTime &&
+                !totalTime) {
+                // No delay types found, use all.
+                dataSelector.setDelayDataTimeTrue();
+            } else {
+                dataSelector.setDelayTimeData(lateAircraftTime, carrierTime, weatherTime, securityTime,
                         nationalAviationSystemTime, totalTime);
+            }
         }
 
         return dataSelector;
@@ -625,6 +631,7 @@ public class MainRestController {
 
         StatisticDataSelectorHelper dataSelector = initializeDataSelector(true, true, year, month,
                 delayTypes);
+
 
         return createGetStatisticsResponse(null, null, year, month, acceptHeader, dataSelector, null);
     }
