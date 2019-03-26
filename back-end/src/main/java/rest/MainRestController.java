@@ -229,7 +229,8 @@ public class MainRestController {
             }
         } else {
             responseHeaders.set("Content-Type", "application/json");
-            responseBody = jsonConverter.extraStatisticsToString(extraStatistics, carrierCode == null);
+            String extraStatsJson = jsonConverter.extraStatisticsToString(extraStatistics, carrierCode == null);
+            responseBody = jsonConverter.mergeLinksAndJson(null, extraStatsJson);
         }
 
         return new ResponseEntity<>(responseBody, responseHeaders, HttpStatus.OK);
