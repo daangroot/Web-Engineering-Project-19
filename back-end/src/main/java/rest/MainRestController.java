@@ -614,10 +614,8 @@ public class MainRestController {
         return createGetStatisticsResponse(airportCode, carrierCode, year, month, acceptHeader, dataSelector, null);
     }
 
-    @GetMapping("/airports/carriers/{carrierCode}/stats/delay-time")
-    public ResponseEntity<String> getDelayTime(@PathVariable String carrierCode,
-                                               @RequestParam(value = "type", required = false)
-                                                       List<String> delayTypes,
+    @GetMapping("/airports/carriers/stats/delay-time")
+    public ResponseEntity<String> getDelayTime(@RequestParam(value = "type", required = false) List<String> delayTypes,
                                                @RequestParam(value = "year", required = false) Integer year,
                                                @RequestParam(value = "month", required = false) Integer month,
                                                @RequestHeader("Accept") String acceptHeader) {
@@ -625,16 +623,15 @@ public class MainRestController {
             delayTypes = new ArrayList<>();
         }
 
-        StatisticDataSelectorHelper dataSelector = initializeDataSelector(true, false, year, month,
+        StatisticDataSelectorHelper dataSelector = initializeDataSelector(true, true, year, month,
                 delayTypes);
 
-        return createGetStatisticsResponse(null, carrierCode, year, month, acceptHeader, dataSelector, null);
+        return createGetStatisticsResponse(null, null, year, month, acceptHeader, dataSelector, null);
     }
 
-    @GetMapping("/airports/{airportCode}/carriers/{carrierCode}/stats/delay-time")
-    public ResponseEntity<String> getDelayTime(@PathVariable String airportCode, @PathVariable String carrierCode,
-                                               @RequestParam(value = "type", required = false)
-                                                       List<String> delayTypes,
+    @GetMapping("/airports/{airportCode}/carriers/stats/delay-time")
+    public ResponseEntity<String> getDelayTime(@PathVariable String airportCode,
+                                               @RequestParam(value = "type", required = false) List<String> delayTypes,
                                                @RequestParam(value = "year", required = false) Integer year,
                                                @RequestParam(value = "month", required = false) Integer month,
                                                @RequestHeader("Accept") String acceptHeader) {
@@ -642,10 +639,10 @@ public class MainRestController {
             delayTypes = new ArrayList<>();
         }
 
-        StatisticDataSelectorHelper dataSelector = initializeDataSelector(false, false, year, month,
+        StatisticDataSelectorHelper dataSelector = initializeDataSelector(false, true, year, month,
                 delayTypes);
 
-        return createGetStatisticsResponse(airportCode, carrierCode, year, month, acceptHeader, dataSelector, null);
+        return createGetStatisticsResponse(airportCode, null, year, month, acceptHeader, dataSelector, null);
     }
 
     @GetMapping("/airports/{airportCode1}/{airportCode2}")
