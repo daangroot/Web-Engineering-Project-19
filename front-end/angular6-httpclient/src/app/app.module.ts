@@ -56,47 +56,47 @@ const appRoutes: Routes = [
     data: { title: 'Carrier Details' }
   },
   {
-    path: '/airports/:airportCode/carriers/:carrierCode/stats',
+    path: 'airports/:airportCode/carriers/:carrierCode/stats',
     component: StatsComponent,
     data: { title: 'Stats for carrier at airport' }
   },
   {
-    path: '/airports/carriers/stats',
+    path: 'airports/carriers/stats',
     component: StatsAddComponent,
     data: { title: 'Add stats' }
   },
   {
-    path: '/airports/:airportCode/carriers/:carrierCode/stats',
+    path: 'airports/:airportCode/carriers/:carrierCode/stats',
     component: StatsEditComponent,
     data: { title: 'Update stats' }
   },
   {
-    path: '/airports/:airportCode/carriers/:carrierCode/stats/flight',
+    path: 'airports/:airportCode/carriers/:carrierCode/stats/flight',
     component: StatsFlightsComponent,
     data: { title: 'Flight Details' }
   },
   {
-    path: '/airports/:airportCode/carriers/stats/delay-time',
+    path: 'airports/:airportCode/carriers/stats/delay-time',
     component: StatsDelayTimesComponent,
     data: { title: 'Delay Times Details' }
   },
   {
-    path: '/airports/:airportCode1/:airportCode2',
+    path: 'airports/:airportCode1/:airportCode2',
     component: TwoAirportsComponent,
     data: { title: '2 Airports List' }
   },
   {
-    path: '/airports/:airportCode1/:airportCode2/carriers/:carrierCode',
+    path: 'airports/:airportCode1/:airportCode2/carriers/:carrierCode',
     component: TwoAirportsCarrierComponent,
     data: { title: 'Carrier operating between two airports' }
   },
   {
-    path: '/airports/:airportCode1/:airportCode2/carriers/extra-stats',
+    path: 'airports/:airportCode1/:airportCode2/carriers/extra-stats',
     component: ExtrastatsComponent,
     data: { title: 'Extra stats for all carriers between 2 airports' }
   },
   {
-    path: '/airports/:airportCode1/:airportCode2/carriers/:carrierCode/extra-stats',
+    path: 'airports/:airportCode1/:airportCode2/carriers/:carrierCode/extra-stats',
     component: ExtrastatsCarrierComponent,
     data: { title: 'Extra stats for carrier between 2 airports' }
   },
@@ -110,9 +110,25 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
-    StatsDelayTimesAirportComponent
+    AirportComponent,
+    AirportDetailComponent,
+    CarrierComponent,
+    CarrierDetailComponent,
+    CarriersAirportComponent,
+    ExtrastatsComponent,
+    ExtrastatsCarrierComponent,
+    StatsComponent,
+    StatsAddComponent,
+    StatsDelayTimesComponent,
+    StatsDelayTimesAirportComponent,
+    StatsEditComponent,
+    StatsFlightsComponent,
+    TwoAirportsComponent,
+    TwoAirportsCarrierComponent
   ],
   imports: [
+  RouterModule.forRoot(appRoutes),
+  FormsModule,
   BrowserModule,
   HttpClientModule
   ],
