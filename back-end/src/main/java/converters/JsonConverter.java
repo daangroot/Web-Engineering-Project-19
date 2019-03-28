@@ -252,16 +252,7 @@ public class JsonConverter implements DataConverter {
 
         return jsonArray.toString();
     }
-/*
-    public String linksToString(List<Link> links) {
-        JsonArray jsonLinks = gson.toJsonTree(links).getAsJsonArray();
 
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.add("links", jsonLinks);
-
-        return jsonObject.toString();
-    }
-*/
     public String mergeLinksAndJson(List<Link> links, String json) {
         JsonObject jsonObject = new JsonObject();
 

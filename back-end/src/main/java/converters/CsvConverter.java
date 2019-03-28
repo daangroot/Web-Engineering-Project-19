@@ -19,7 +19,7 @@ public class CsvConverter implements DataConverter {
     @Override
     public String airportsToString(List<Airport> airports) throws IOException {
         StringWriter stringWriter = new StringWriter();
-        CSVPrinter csvPrinter = new CSVPrinter(stringWriter, CSVFormat.DEFAULT.withHeader("code", "name"));
+        CSVPrinter csvPrinter = new CSVPrinter(stringWriter, CSVFormat.DEFAULT.withHeader("airportCode", "airportName"));
 
         for (Airport airport : airports) {
             csvPrinter.printRecord(airport.getCode(), airport.getName());
@@ -33,7 +33,7 @@ public class CsvConverter implements DataConverter {
     @Override
     public String carriersToString(List<Carrier> carriers) throws IOException {
         StringWriter stringWriter = new StringWriter();
-        CSVPrinter csvPrinter = new CSVPrinter(stringWriter, CSVFormat.DEFAULT.withHeader("code", "name"));
+        CSVPrinter csvPrinter = new CSVPrinter(stringWriter, CSVFormat.DEFAULT.withHeader("carrierCode", "carrierName"));
 
         for (Carrier carrier : carriers) {
             csvPrinter.printRecord(carrier.getCode(), carrier.getName());
