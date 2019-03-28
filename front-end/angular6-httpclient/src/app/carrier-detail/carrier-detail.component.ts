@@ -14,7 +14,7 @@ export class CarrierDetailComponent implements OnInit {
   constructor(public rest:RestService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
-    this.rest.getAirportCarrier(this.route.snapshot.params['airportCode','carrierCode']).subscribe((data: {}) => {
+    this.rest.getAirportCarrier(this.route.snapshot.params['airportCode'],['carrierCode']).subscribe((data: {}) => {
       console.log(data);
       this.carrier = data;
     });

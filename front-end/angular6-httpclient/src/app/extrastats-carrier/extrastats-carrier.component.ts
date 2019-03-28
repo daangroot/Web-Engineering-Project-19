@@ -19,7 +19,7 @@ export class ExtrastatsCarrierComponent implements OnInit {
 
   getExtrastats() {
     this.extrastats = [];
-    this.rest.getExtraStats(this.route.snapshot.params['airportCode1', 'airportCode2', 'carrierCode']).subscribe((data: {}) => {
+    this.rest.getExtraStatsCarrier(this.route.snapshot.params['airportCode1'],['airportCode2'],['carrierCode']).subscribe((data: {}) => {
       console.log(data);
       this.extrastats = data;
     });

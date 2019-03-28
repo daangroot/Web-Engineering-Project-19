@@ -84,7 +84,7 @@ export class RestService {
       map(this.extractData));
   }
 
-  getDelayTime(airportCode): Observable<any> {
+  getDelayTimeAirport(airportCode): Observable<any> {
     return this.http.get(this.endpoint + 'airports/' + airportCode + '/carriers' + '/stats' + '/delay-time/').pipe(
       map(this.extractData));
   }
@@ -109,7 +109,7 @@ export class RestService {
       map(this.extractData));
   }
 
-  getExtraStats(airportCode1, airportCode2, carrierCode): Observable<any> {
+  getExtraStatsCarrier(airportCode1, airportCode2, carrierCode): Observable<any> {
     return this.http.get(this.endpoint + 'airports/' + airportCode1 + '/' + airportCode2 + '/carriers/' + carrierCode +'/extra-stats/').pipe(
       map(this.extractData));
   }
@@ -127,5 +127,5 @@ export class RestService {
       return of(result as T);
     };
   }
-  
+
 }

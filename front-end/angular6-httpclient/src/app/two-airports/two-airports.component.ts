@@ -19,7 +19,7 @@ export class TwoAirportsComponent implements OnInit {
 
   get2Airports() {
     this.airports = [];
-    this.rest.get2Airports(this.route.snapshot.params['airportCode1', 'airportCode2']).subscribe((data: {}) => {
+    this.rest.get2Airports(this.route.snapshot.params['airportCode1'],['airportCode2']).subscribe((data: {}) => {
       console.log(data);
       this.airports = data;
     });

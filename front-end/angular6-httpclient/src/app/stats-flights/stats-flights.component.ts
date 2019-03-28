@@ -19,7 +19,7 @@ export class StatsFlightsComponent implements OnInit {
 
   getStatsFlights() {
     this.statsFlights = [];
-    this.rest.getFlightData(this.route.snapshot.params['airportCode', 'carrierCode']).subscribe((data: {}) => {
+    this.rest.getFlightData(this.route.snapshot.params['airportCode'],['carrierCode']).subscribe((data: {}) => {
       console.log(data);
       this.statsFlights = data;
     });

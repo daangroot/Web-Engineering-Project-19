@@ -3,9 +3,9 @@ import { RestService } from '../rest.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-carrier',
-  templateUrl: './carrier.component.html',
-  styleUrls: ['./carrier.component.css']
+  selector: 'app-carriers-airport',
+  templateUrl: './carriers-airport.component.html',
+  styleUrls: ['./carriers-airport.component.css']
 })
 export class CarriersAirportComponent implements OnInit {
 

@@ -19,7 +19,7 @@ export class TwoAirportsCarrierComponent implements OnInit {
 
   get2AirportsCarrier() {
     this.carriers = [];
-    this.rest.get2AirportsCarrier(this.route.snapshot.params['airportCode1', 'airportCode2', 'carrierCode']).subscribe((data: {}) => {
+    this.rest.get2AirportsCarrier(this.route.snapshot.params['airportCode1'],['airportCode2'],['carrierCode']).subscribe((data: {}) => {
       console.log(data);
       this.carriers = data;
     });

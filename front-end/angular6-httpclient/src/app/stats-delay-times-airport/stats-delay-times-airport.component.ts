@@ -19,7 +19,7 @@ export class StatsDelayTimesAirportComponent implements OnInit {
 
   getStatsDelayTimeAirport() {
     this.statsTimes = [];
-    this.rest.getDelayTime(this.route.snapshot.params['airportCode']).subscribe((data: {}) => {
+    this.rest.getDelayTimeAirport(this.route.snapshot.params['airportCode']).subscribe((data: {}) => {
       console.log(data);
       this.statsTimes = data;
     });

@@ -19,7 +19,7 @@ export class StatsComponent implements OnInit {
 
   getStats() {
     this.stats = [];
-    this.rest.getStatsAtAirport(this.route.snapshot.params['airportCode', 'carrierCode']).subscribe((data: {}) => {
+    this.rest.getStats(this.route.snapshot.params['airportCode'],['carrierCode']).subscribe((data: {}) => {
       console.log(data);
       this.stats = data;
     });
