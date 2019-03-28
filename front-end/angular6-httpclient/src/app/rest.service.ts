@@ -10,8 +10,8 @@ export class RestService {
 
   constructor(private http: HttpClient) { }
 
-  const endpoint = 'http://localhost:3000/api/v1/';
-  const httpOptions = {
+  endpoint = 'http://94.212.164.28:8080';
+  httpOptions = {
     headers: new HttpHeaders({
       'Content-Type':  'application/json'
     })
@@ -23,94 +23,94 @@ export class RestService {
   }
 
   getAirports(): Observable<any> {
-    return this.http.get(endpoint + 'airports').pipe(
+    return this.http.get(this.endpoint + 'airports').pipe(
       map(this.extractData));
   }
 
   getCarriers(): Observable<any> {
-    return this.http.get(endpoint + 'carriers').pipe(
+    return this.http.get(this.endpoint + 'carriers').pipe(
       map(this.extractData));
   }
 
   getAirport(airportCode): Observable<any> {
-    return this.http.get(endpoint + 'airports/' + airportCode + '/').pipe(
+    return this.http.get(this.endpoint + 'airports/' + airportCode + '/').pipe(
       map(this.extractData));
   }
 
   getCarriersAtAirport(airportCode): Observable<any> {
-    return this.http.get(endpoint + 'airports/' + airportCode + '/carriers/').pipe(
+    return this.http.get(this.endpoint + 'airports/' + airportCode + '/carriers/').pipe(
       map(this.extractData));
   }
 
   getAirportCarrier(airportCode, carrierCode): Observable<any> {
-    return this.http.get(endpoint + 'airports/' + airportCode + '/carriers/' + carrierCode + '/').pipe(
+    return this.http.get(this.endpoint + 'airports/' + airportCode + '/carriers/' + carrierCode + '/').pipe(
       map(this.extractData));
   }
 
   getStats(airportCode, carrierCode): Observable<any> {
-    return this.http.get(endpoint + 'airports/' + airportCode + '/carriers/' + carrierCode + '/stats/').pipe(
+    return this.http.get(this.endpoint + 'airports/' + airportCode + '/carriers/' + carrierCode + '/stats/').pipe(
       map(this.extractData));
   }
 
   addStats(data): Observable<any> {
     console.log(data);
-    return this.http.post<any>(endpoint + 'airports/' + 'carriers/' + 'stats/', JSON.stringify(data), httpOptions).pipe(
+    return this.http.post<any>(this.endpoint + 'airports/' + 'carriers/' + 'stats/', JSON.stringify(data), this.httpOptions).pipe(
       tap((data) => console.log(`added stats`)),
       catchError(this.handleError<any>('addStats'))
     );
   }
 
   updateStats(airportCode, carrierCode, data): Observable<any> {
-    return this.http.put(endpoint + 'airports/' + airportCode + '/carriers' + carrierCode + '/stats/', JSON.stringify(data), httpOptions).pipe(
+    return this.http.put(this.endpoint + 'airports/' + airportCode + '/carriers' + carrierCode + '/stats/', JSON.stringify(data), this.httpOptions).pipe(
       tap(_ => console.log(`updated stats for airport code=${airportCode} and carrier code=${carrierCode}`)),
       catchError(this.handleError<any>('updateStats'))
     );
   }
 
   deleteStats(airportCode, carrierCode): Observable<any> {
-    return this.http.delete<any>(endpoint + 'airports/' + airportCode + '/carriers' + carrierCode + '/stats/', httpOptions).pipe(
+    return this.http.delete<any>(this.endpoint + 'airports/' + airportCode + '/carriers' + carrierCode + '/stats/', this.httpOptions).pipe(
       tap(_ => console.log(`deleted stats for airport code=${airportCode} and carrier code=${carrierCode}`)),
       catchError(this.handleError<any>('deleteStats'))
     );
   }
 
   getFlightData(airportCode, carrierCode): Observable<any> {
-    return this.http.get(endpoint + 'airports/' + airportCode + '/carriers/' + carrierCode + '/stats' + '/flight/').pipe(
+    return this.http.get(this.endpoint + 'airports/' + airportCode + '/carriers/' + carrierCode + '/stats' + '/flight/').pipe(
       map(this.extractData));
   }
 
   getDelayTime(): Observable<any> {
-    return this.http.get(endpoint + 'airports/' + '/carriers' + '/stats' + '/delay-time/').pipe(
+    return this.http.get(this.endpoint + 'airports/' + '/carriers' + '/stats' + '/delay-time/').pipe(
       map(this.extractData));
   }
 
   getDelayTime(airportCode): Observable<any> {
-    return this.http.get(endpoint + 'airports/' + airportCode + '/carriers' + '/stats' + '/delay-time/').pipe(
+    return this.http.get(this.endpoint + 'airports/' + airportCode + '/carriers' + '/stats' + '/delay-time/').pipe(
       map(this.extractData));
   }
 
   get2Airports(airportCode1, airportCode2): Observable<any> {
-    return this.http.get(endpoint + 'airports/' + airportCode1 + '/' + airportCode2 + '/').pipe(
+    return this.http.get(this.endpoint + 'airports/' + airportCode1 + '/' + airportCode2 + '/').pipe(
       map(this.extractData));
   }
 
   get2AirportsCarriers(airportCode1, airportCode2): Observable<any> {
-    return this.http.get(endpoint + 'airports/' + airportCode1 + '/' + airportCode2 + '/carriers/').pipe(
+    return this.http.get(this.endpoint + 'airports/' + airportCode1 + '/' + airportCode2 + '/carriers/').pipe(
       map(this.extractData));
   }
 
   get2AirportsCarrier(airportCode1, airportCode2, carrierCode): Observable<any> {
-    return this.http.get(endpoint + 'airports/' + airportCode1 + '/' + airportCode2 + '/carriers/' + carrierCode +'/').pipe(
+    return this.http.get(this.endpoint + 'airports/' + airportCode1 + '/' + airportCode2 + '/carriers/' + carrierCode +'/').pipe(
       map(this.extractData));
   }
 
   getExtraStats(airportCode1, airportCode2): Observable<any> {
-    return this.http.get(endpoint + 'airports/' + airportCode1 + '/' + airportCode2 + '/carriers' +'/extra-stats/').pipe(
+    return this.http.get(this.endpoint + 'airports/' + airportCode1 + '/' + airportCode2 + '/carriers' +'/extra-stats/').pipe(
       map(this.extractData));
   }
 
   getExtraStats(airportCode1, airportCode2, carrierCode): Observable<any> {
-    return this.http.get(endpoint + 'airports/' + airportCode1 + '/' + airportCode2 + '/carriers/' + carrierCode +'/extra-stats/').pipe(
+    return this.http.get(this.endpoint + 'airports/' + airportCode1 + '/' + airportCode2 + '/carriers/' + carrierCode +'/extra-stats/').pipe(
       map(this.extractData));
   }
 

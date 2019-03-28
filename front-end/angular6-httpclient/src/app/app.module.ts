@@ -8,6 +8,26 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { StatsDelayTimesAirportComponent } from './stats-delay-times-airport/stats-delay-times-airport.component';
 
+import { AirportComponent } from './airport/airport.component';
+import { AirportDetailComponent } from './airport-detail/airport-detail.component';
+
+import { CarrierComponent } from './carrier/carrier.component';
+import { CarrierDetailComponent } from './carrier-detail/carrier-detail.component';
+
+import { CarriersAirportComponent } from './carriers-airport/carriers-airport.component';
+
+import { StatsComponent } from './stats/stats.component';
+import { StatsAddComponent } from './stats-add/stats-add.component';
+import { StatsEditComponent } from './stats-edit/stats-edit.component';
+import { StatsFlightsComponent } from './stats-flights/stats-flights.component';
+import { StatsDelayTimesComponent } from './stats-delay-times/stats-delay-times.component';
+
+import { TwoAirportsComponent } from './two-airports/two-airports.component';
+import { TwoAirportsCarrierComponent } from './two-airports-carrier/two-airports-carrier.component';
+
+import { ExtrastatsComponent } from './extrastats/extrastats.component';
+import { ExtrastatsCarrierComponent } from './extrastats-carrier/extrastats-carrier.component';
+
 
 const appRoutes: Routes = [
   {
