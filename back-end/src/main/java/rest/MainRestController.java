@@ -17,7 +17,7 @@ import converters.CsvConverter;
 import converters.JsonConverter;
 import database.DatabaseConnector;
 
-@CrossOrigin
+@CrossOrigin(maxAge = 3600)
 @RestController
 public class MainRestController {
     private DatabaseConnector databaseConnector;
