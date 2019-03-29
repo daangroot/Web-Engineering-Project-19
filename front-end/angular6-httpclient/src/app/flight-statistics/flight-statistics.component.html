@@ -1,0 +1,50 @@
+<a href="/statistics">Back</a>
+<h2>Flight Statistics</h2>
+
+<label>Year:<br>
+<input [(ngModel)]="year"/><br>
+</label><br>
+
+<label>Month:<br>
+<select [(ngModel)]="month">
+  <option value=""></option>
+  <option value="1">January</option>
+  <option value="2">February</option>
+  <option value="3">March</option>
+  <option value="4">April</option>
+  <option value="5">May</option>
+  <option value="6">June</option>
+  <option value="7">July</option>
+  <option value="8">August</option>
+  <option value="9">September</option>
+  <option value="10">October</option>
+  <option value="11">November</option>
+  <option value="12">December</option>
+</select>
+</label><br><br>
+
+<label>Airport code:<br>
+<input [(ngModel)]="airportCode"/>
+</label><br>
+<label>Carrier code:<br>
+<input [(ngModel)]="carrierCode"/>
+</label><br>
+
+<button (click)="getFlightData()">Get</button><br><br>
+
+<ul class="flightData">
+  <li *ngFor="let f of flightData;">
+    <div *ngIf="f.year">
+      <b>Year:</b> {{f.year}}
+    </div>
+
+    <div *ngIf="f.month">
+      <b>Month:</b> {{f.month}}
+    </div>
+
+    <b>Flight statistics</b><br>
+    Cancelled flights: {{f.flightData.cancelledCount}}<br>
+    On time flights: {{f.flightData.onTimeCount}}<br>
+    Delayed flights: {{f.flightData.delayedCount}}<br>
+  </li>
+</ul>

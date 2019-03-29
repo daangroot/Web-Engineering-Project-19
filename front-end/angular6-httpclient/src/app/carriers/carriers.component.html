@@ -1,0 +1,19 @@
+<a href="/">Back</a>
+<h2>Carriers</h2>
+
+<label>Only get carriers that operate at a specific airport:<br>
+  <input [(ngModel)]="carrierCode" placeholder="Airport code"/>
+</label><br>
+<button (click)="getCarriersAtAirport()">Get</button><br><br>
+
+<div *ngIf="isError" style="color:red;">
+  {{error}}
+</div>
+
+<ul class="carriers">
+  <li *ngFor="let c of carriersWithLinks;">
+     <b>Code:</b> {{c.carrier.code}}
+     <br>
+     <b>Name:</b> {{c.carrier.name}}
+  </li>
+</ul>

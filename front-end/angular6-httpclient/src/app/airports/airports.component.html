@@ -1,0 +1,14 @@
+<a href="/">Back</a>
+<h2>Airports</h2>
+
+<div *ngIf="isError" style="color:red;">
+  {{error}}
+</div>
+
+<ul class="airports">
+  <li *ngFor="let a of airportsWithLinks;">
+     <b>Code:</b> {{a.airport.code}}
+     <br>
+     <b>Name:</b> {{a.airport.name}}
+  </li>
+</ul>

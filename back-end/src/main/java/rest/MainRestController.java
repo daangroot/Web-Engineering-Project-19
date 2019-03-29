@@ -17,6 +17,7 @@ import converters.CsvConverter;
 import converters.JsonConverter;
 import database.DatabaseConnector;
 
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
 public class MainRestController {
     private DatabaseConnector databaseConnector;
@@ -311,7 +312,8 @@ public class MainRestController {
             }
         } else {
             responseHeaders.set("Content-Type", "application/json");
-            String jsonCarriers = jsonConverter.carriersToString(carriers);
+            String baseHref = URI + "carriers/";
+            String jsonCarriers = jsonConverter.carriersToStringWithLinks(carriers, baseHref);
             responseBody = jsonConverter.mergeLinksAndJson(null, jsonCarriers);
         }
 
