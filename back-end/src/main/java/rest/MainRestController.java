@@ -17,7 +17,7 @@ import converters.CsvConverter;
 import converters.JsonConverter;
 import database.DatabaseConnector;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class MainRestController {
     private DatabaseConnector databaseConnector;
