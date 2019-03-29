@@ -17,7 +17,6 @@ import converters.CsvConverter;
 import converters.JsonConverter;
 import database.DatabaseConnector;
 
-@CrossOrigin(maxAge = 3600)
 @RestController
 public class MainRestController {
     private DatabaseConnector databaseConnector;
@@ -251,6 +250,7 @@ public class MainRestController {
         return new ResponseEntity<>(responseBody, responseHeaders, HttpStatus.OK);
     }
 
+    @CrossOrigin
     @GetMapping("/airports")
     public ResponseEntity<String> getAirports(@RequestHeader("Accept") String mediaType) {
         HttpHeaders responseHeaders = new HttpHeaders();
