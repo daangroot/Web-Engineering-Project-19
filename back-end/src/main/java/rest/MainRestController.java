@@ -17,13 +17,13 @@ import converters.CsvConverter;
 import converters.JsonConverter;
 import database.DatabaseConnector;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class MainRestController {
     private DatabaseConnector databaseConnector;
     private JsonConverter jsonConverter;
     private CsvConverter csvConverter;
-    private final String URI = "http://94.212.164.28:8080/";
+    private final String URI = "http://localhost:8080/";
 
     public MainRestController() {
         try {

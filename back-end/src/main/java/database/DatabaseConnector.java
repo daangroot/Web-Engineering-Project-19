@@ -5,10 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -17,7 +14,7 @@ import models.*;
 
 public class DatabaseConnector {
     // Database URL, and database credentials.
-    private final String DB_URL = "jdbc:mysql://localhost:3306/webengdb";
+    private final String DB_URL = "jdbc:mysql://localhost:3306/webengdb?serverTimezone=" + TimeZone.getDefault().getID();
     private final String USER = "webenguser";
     private final String PASS = "webengpass123";
 
@@ -125,7 +122,6 @@ public class DatabaseConnector {
                 "cancelledCount MEDIUMINT UNSIGNED NOT NULL," +
                 "onTimeCount MEDIUMINT UNSIGNED NOT NULL," +
                 "delayedCount MEDIUMINT UNSIGNED NOT NULL," +
-                "divertedCount MEDIUMINT UNSIGNED NOT NULL," +
                 "divertedCount MEDIUMINT UNSIGNED NOT NULL," +
                 "totalCount MEDIUMINT UNSIGNED NOT NULL," +
 
