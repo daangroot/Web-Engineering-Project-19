@@ -17,6 +17,7 @@ import converters.CsvConverter;
 import converters.JsonConverter;
 import database.DatabaseConnector;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class MainRestController {
     private DatabaseConnector databaseConnector;
@@ -251,7 +252,7 @@ public class MainRestController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/airports", method = RequestMethod.GET)
+    @GetMapping("/airports")
     public ResponseEntity<String> getAirports(@RequestHeader("Accept") String mediaType) {
         HttpHeaders responseHeaders = new HttpHeaders();
         String responseBody;
