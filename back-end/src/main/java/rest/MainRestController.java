@@ -17,6 +17,7 @@ import converters.CsvConverter;
 import converters.JsonConverter;
 import database.DatabaseConnector;
 
+@CrossOrigin
 @RestController
 public class MainRestController {
     private DatabaseConnector databaseConnector;
