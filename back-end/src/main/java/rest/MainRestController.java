@@ -251,7 +251,7 @@ public class MainRestController {
     }
 
     @CrossOrigin
-    @GetMapping("/airports")
+    @RequestMapping(value = "/airports", method = RequestMethod.GET)
     public ResponseEntity<String> getAirports(@RequestHeader("Accept") String mediaType) {
         HttpHeaders responseHeaders = new HttpHeaders();
         String responseBody;
