@@ -1,41 +1,25 @@
 package models;
 
-import java.time.YearMonth;
-
 public class Statistic {
 	private Airport airport;
-	private Airport airport1;
-	private Airport airport2;
 	private Carrier carrier;
-	private YearMonth yearMonth;
-	
-	// Statistics about flights.
-	private int cancelledFlightCount;
-	private int onTimeFlightCount;
-	private int delayedFlightCount;
-	private int divertedFlightCount;
-	private int totalFlightCount;
-	
-	// Number of delays for each delay reason.
-	private int lateAircraftDelayCount;
-	private int carrierDelayCount;
-	private int weatherDelayCount;
-	private int securityDelayCount;
-	private int nationalAviationSystemDelayCount;
-	
-	// Total delay time in minutes for each delay reason.
-	private int lateAircraftDelayTime;
-	private int carrierDelayTime;
-	private int weatherDelayTime;
-	private int securityDelayTime;
-	private int nationalAviationSystemDelayTime;
-	private int totalDelayTime;
+	private Integer year;
+	private Integer month;
 
-	
-	public Statistic (Airport airport, Carrier carrier, YearMonth yearMonth) {
+	private FlightData flightData;
+	private DelayData delayData;
+	private DelayTimeData delayTimeData;
+
+	public Statistic (Airport airport, Carrier carrier, Integer year, Integer month, FlightData flightData, DelayData delayData,
+					  DelayTimeData delayTimeData) {
 		this.airport = airport;
 		this.carrier = carrier;
-		this.yearMonth = yearMonth;
+		this.year = year;
+		this.month = month;
+
+		this.flightData = flightData;
+		this.delayData = delayData;
+		this.delayTimeData = delayTimeData;
 	}
 	
 	public Airport getAirport() {
@@ -46,136 +30,23 @@ public class Statistic {
 		return carrier;
 	}
 
-	public YearMonth getYearMonth() {
-		return yearMonth;
-	}	
-
-	public int getCancelledFlightCount() {
-		return cancelledFlightCount;
+	public Integer getYear() {
+		return year;
 	}
 
-	public void setCancelledFlightCount(int cancelledFlightCount) {
-		this.cancelledFlightCount = cancelledFlightCount;
+	public Integer getMonth() {
+		return month;
 	}
 
-	public int getOnTimeFlightCount() {
-		return onTimeFlightCount;
+	public FlightData getFlightData() {
+		return flightData;
 	}
 
-	public void setOnTimeFlightCount(int onTimeFlightCount) {
-		this.onTimeFlightCount = onTimeFlightCount;
+	public DelayData getDelayData() {
+		return delayData;
 	}
 
-	public int getDelayedFlightCount() {
-		return delayedFlightCount;
+	public DelayTimeData getDelayTimeData() {
+		return delayTimeData;
 	}
-
-	public void setDelayedFlightCount(int delayedFlightCount) {
-		this.delayedFlightCount = delayedFlightCount;
-	}
-
-	public int getDivertedFlightCount() {
-		return divertedFlightCount;
-	}
-
-	public void setDivertedFlightCount(int divertedFlightCount) {
-		this.divertedFlightCount = divertedFlightCount;
-	}
-
-	public int getTotalFlightCount() {
-		return totalFlightCount;
-	}
-
-	public void setTotalFlightCount(int totalFlightCount) {
-		this.totalFlightCount = totalFlightCount;
-	}
-
-	public int getLateAircraftDelayCount() {
-		return lateAircraftDelayCount;
-	}
-
-	public void setLateAircraftDelayCount(int lateAircraftDelayCount) {
-		this.lateAircraftDelayCount = lateAircraftDelayCount;
-	}
-
-	public int getCarrierDelayCount() {
-		return carrierDelayCount;
-	}
-
-	public void setCarrierDelayCount(int carrierDelayCount) {
-		this.carrierDelayCount = carrierDelayCount;
-	}
-
-	public int getWeatherDelayCount() {
-		return weatherDelayCount;
-	}
-
-	public void setWeatherDelayCount(int weatherDelayCount) {
-		this.weatherDelayCount = weatherDelayCount;
-	}
-
-	public int getSecurityDelayCount() {
-		return securityDelayCount;
-	}
-
-	public void setSecurityDelayCount(int securityDelayCount) {
-		this.securityDelayCount = securityDelayCount;
-	}
-
-	public int getNationalAviationSystemDelayCount() {
-		return nationalAviationSystemDelayCount;
-	}
-
-	public void setNationalAviationSystemDelayCount(int nationalAviationSystemDelayCount) {
-		this.nationalAviationSystemDelayCount = nationalAviationSystemDelayCount;
-	}
-
-	public int getLateAircraftDelayTime() {
-		return lateAircraftDelayTime;
-	}
-
-	public void setLateAircraftDelayTime(int lateAircraftDelayTime) {
-		this.lateAircraftDelayTime = lateAircraftDelayTime;
-	}
-
-	public int getCarrierDelayTime() {
-		return carrierDelayTime;
-	}
-
-	public void setCarrierDelayTime(int carrierDelayTime) {
-		this.carrierDelayTime = carrierDelayTime;
-	}
-
-	public int getWeatherDelayTime() {
-		return weatherDelayTime;
-	}
-
-	public void setWeatherDelayTime(int weatherDelayTime) {
-		this.weatherDelayTime = weatherDelayTime;
-	}
-
-	public int getSecurityDelayTime() {
-		return securityDelayTime;
-	}
-
-	public void setSecurityDelayTime(int securityDelayTime) {
-		this.securityDelayTime = securityDelayTime;
-	}
-
-	public int getNationalAviationSystemDelayTime() {
-		return nationalAviationSystemDelayTime;
-	}
-
-	public void setNationalAviationSystemDelayTime(int nationalAviationSystemDelayTime) {
-		this.nationalAviationSystemDelayTime = nationalAviationSystemDelayTime;
-	}
-
-	public int getTotalDelayTime() {
-		return totalDelayTime;
-	}
-
-	public void setTotalDelayTime(int totalDelayTime) {
-		this.totalDelayTime = totalDelayTime;
-	}
-
 }

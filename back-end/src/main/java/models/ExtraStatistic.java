@@ -1,19 +1,19 @@
 package models;
 
-
 public class ExtraStatistic {
     private Airport airport1;
     private Airport airport2;
     private Carrier carrier;
 
-    // Extra stats
-    private double lateAircraftDelaysTimedMean;
-    private double lateAircraftDelaysTimedMed;
-    private double lateAircraftDelaysTimedSd;
-    private double carrierAircraftDelaysTimedMean;
-    private double carrierAircraftDelaysTimedMed;
-    private double carrierAircraftDelaysTimedSd;
+    // Late aircraft delay time extra stats.
+    private float lateAircraftTimeMean;
+    private float lateAircraftTimeMedian;
+    private float lateAircraftTimeSd;
 
+    // Carrier delay time extra stats.
+    private float carrierTimeMean;
+    private float carrierTimeMedian;
+    private float carrierTimeSd;
 
     public ExtraStatistic (Airport airport1, Airport airport2, Carrier carrier) {
         this.airport1 = airport1;
@@ -33,51 +33,51 @@ public class ExtraStatistic {
         return carrier;
     }
 
-    public int getLateAircraftDelaysTimedMean() {
-        return lateAircraftDelaysTimedMean;
+    public float getLateAircraftTimeMean() {
+        return lateAircraftTimeMean;
     }
 
-    public void setLateAircraftDelaysTimedMean(double lateAircraftDelaysTimedMean) {
-        this.lateAircraftDelaysTimedMean = lateAircraftDelaysTimedMean;
+    public float getLateAircraftTimeMedian() {
+        return lateAircraftTimeMedian;
     }
 
-    public int getLateAircraftDelaysTimedMed() {
-        return lateAircraftDelaysTimedMed;
+    public float getLateAircraftTimeSd() {
+        return lateAircraftTimeSd;
     }
 
-    public void setLateAircraftDelaysTimedMed(double lateAircraftDelaysTimedMed) {
-        this.lateAircraftDelaysTimedMed = lateAircraftDelaysTimedMed;
+    public float getCarrierTimeMean() {
+        return carrierTimeMean;
     }
 
-    public int getLateAircraftDelaysTimedSd() {
-        return lateAircraftDelaysTimedSd;
+    public float getCarrierTimeMedian() {
+        return carrierTimeMedian;
     }
 
-    public void setLateAircraftDelaysTimedSd(double lateAircraftDelaysTimedSd) {
-        this.lateAircraftDelaysTimedSd = lateAircraftDelaysTimedSd;
+    public float getCarrierTimeSd() {
+        return carrierTimeSd;
     }
 
-    public int getCarrierAircraftDelaysTimedMean() {
-        return carrierAircraftDelaysTimedMean;
+    public void setLateAircraftTimeMean(float lateAircraftTimeMean) {
+        this.lateAircraftTimeMean = lateAircraftTimeMean;
     }
 
-    public void setCarrierAircraftDelaysTimedMean(double carrierAircraftDelaysTimedMean) {
-        this.carrierAircraftDelaysTimedMean = carrierAircraftDelaysTimedMean;
+    public void setLateAircraftTimeMedian(float lateAircraftTimeMedian) {
+        this.lateAircraftTimeMedian = lateAircraftTimeMedian;
     }
 
-    public int getCarrierAircraftDelaysTimedMed() {
-        return carrierAircraftDelaysTimedMed;
+    public void setLateAircraftTimeSd(float lateAircraftTimeSd) {
+        this.lateAircraftTimeSd = lateAircraftTimeSd;
     }
 
-    public void setCarrierAircraftDelaysTimedMed(double carrierAircraftDelaysTimedMed) {
-        this.carrierAircraftDelaysTimedMed = carrierAircraftDelaysTimedMed;
+    public void setCarrierTimeMean(float carrierTimeMean) {
+        this.carrierTimeMean = carrierTimeMean;
     }
 
-    public int getCarrierAircraftDelaysTimedSd() {
-        return carrierAircraftDelaysTimedSd;
+    public void setCarrierTimeMedian(float carrierTimeMedian) {
+        this.carrierTimeMedian = carrierTimeMedian;
     }
 
-    public void setCarrierAircraftDelaysTimedSd(double carrierAircraftDelaysTimedSd) {
-        this.carrierAircraftDelaysTimedSd = carrierAircraftDelaysTimedSd;
+    public void setCarrierTimeSd(float carrierTimeSd) {
+        this.carrierTimeSd = carrierTimeSd;
     }
 }

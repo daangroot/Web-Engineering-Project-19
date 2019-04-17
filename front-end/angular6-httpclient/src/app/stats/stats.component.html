@@ -1,0 +1,157 @@
+<a href="/">Back</a>
+<ul>
+  <li>
+     <a href="/statistics/flight">Flight Statistics</a>
+  </li>
+  <li>
+    <a href="/statistics/delay-time">Delay Time Statistics</a>
+  </li>
+</ul>
+<h2>Statistics</h2>
+
+Add/update statistics:
+<input type="checkbox" (change)="addUpdateStats($event)"><br><br>
+
+<label>Year:<br>
+<input [(ngModel)]="year"/><br>
+</label><br>
+
+<label>Month:<br>
+<select [(ngModel)]="month">
+  <option value=""></option>
+  <option value="1">January</option>
+  <option value="2">February</option>
+  <option value="3">March</option>
+  <option value="4">April</option>
+  <option value="5">May</option>
+  <option value="6">June</option>
+  <option value="7">July</option>
+  <option value="8">August</option>
+  <option value="9">September</option>
+  <option value="10">October</option>
+  <option value="11">November</option>
+  <option value="12">December</option>
+</select>
+</label><br><br>
+
+<label>Airport code:<br>
+<input [(ngModel)]="airportCode"/>
+</label><br>
+<label>Carrier code:<br>
+<input [(ngModel)]="carrierCode"/>
+</label>
+
+<div *ngIf="addUpdate">
+  <br>
+  <b>Flight statistics</b><br>
+  <label>Cancelled flights:<br>
+  <input [(ngModel)]="cancelledCount"/>
+  </label><br>
+
+  <label>On time flights:<br>
+  <input [(ngModel)]="onTimeCount"/>
+  </label><br>
+
+  <label>Delayed flights:<br>
+  <input [(ngModel)]="delayedCount"/>
+  </label><br>
+
+  <label>Diverted flights:<br>
+  <input [(ngModel)]="divertedCount"/>
+  </label><br>
+
+  <label>Total flights:<br>
+  <input [(ngModel)]="totalCount"/>
+  </label><br><br>
+
+  <b>Delay statistics</b><br>
+  <label>Late aircraft delays:<br>
+  <input [(ngModel)]="lateAircraftCount"/>
+  </label><br>
+
+  <label>Carriers delays:<br>
+  <input [(ngModel)]="carrierCount"/>
+  </label><br>
+
+  <label>Weather delays:<br>
+  <input [(ngModel)]="weatherCount"/>
+  </label><br>
+
+  <label>Security delays:<br>
+  <input [(ngModel)]="securityCount"/>
+  </label><br>
+
+  <label>National aviation system delays:<br>
+  <input [(ngModel)]="nationalAviationSystemCount"/>
+  </label><br><br>
+
+  <b>Delay time statistics</b><br>
+  <label>Late aircraft delay time:<br>
+  <input [(ngModel)]="lateAircraftTime"/>
+  </label><br>
+
+  <label>Carriers delay time:<br>
+  <input [(ngModel)]="carrierTime"/>
+  </label><br>
+
+  <label>Weather delay time:<br>
+  <input [(ngModel)]="weatherTime"/>
+  </label><br>
+
+  <label>Security delay time:<br>
+  <input [(ngModel)]="securityTime"/>
+  </label><br>
+
+  <label>National aviation system delay time:<br>
+  <input [(ngModel)]="nationalAviationSystemTime"/>
+  </label><br>
+
+  <label>Total time:<br>
+  <input [(ngModel)]="totalTime"/>
+  </label>
+</div>
+
+<div *ngIf="!addUpdate">
+  <button (click)="getStatistics()">Get</button>
+  <button (click)="deleteStatistics()" style="margin-left:20px;">Delete</button>
+</div>
+
+<div *ngIf="addUpdate">
+  <button (click)="addStatistics()">Add</button>
+  <button (click)="updateStatistics()" style="margin-left:20px;">Update</button>
+</div>
+<br>
+
+<ul *ngIf="!addUpdate" class="statistics">
+  <li *ngFor="let s of statistics;">
+    <div *ngIf="s.year">
+      <b>Year:</b> {{s.year}}
+    </div>
+
+    <div *ngIf="s.month">
+      <b>Month:</b> {{s.month}}
+    </div><br>
+
+    <b>Flight statistics</b><br>
+    Cancelled flights: {{s.flightData.cancelledCount}}<br>
+    On time flights: {{s.flightData.onTimeCount}}<br>
+    Delayed flights: {{s.flightData.delayedCount}}<br>
+    Diverted flights: {{s.flightData.divertedCount}}<br>
+    Total flights: {{s.flightData.totalCount}}<br><br>
+
+    <b>Delay statistics</b><br>
+    Late aircraf delays: {{s.delayData.lateAircraftCount}}<br>
+    Carrier delays: {{s.delayData.carrierCount}}<br>
+    Weather delays: {{s.delayData.weatherCount}}<br>
+    Security delays: {{s.delayData.securityCount}}<br>
+    National aviation system delays: {{s.delayData.nationalAviationSystemCount}}<br><br>
+
+    <b>Delay time statistics</b><br>
+    Late aircraf delay time: {{s.delayTimeData.lateAircraftTime}}<br>
+    Carrier delay time: {{s.delayTimeData.carrierTime}}<br>
+    Weather delay time: {{s.delayTimeData.weatherTime}}<br>
+    Security delay time: {{s.delayTimeData.securityTime}}<br>
+    National aviation system delay time: {{s.delayTimeData.nationalAviationSystemTime}}<br>
+    Total delay time: {{s.delayTimeData.totalTime}}<br><br>
+  </li>
+</ul>

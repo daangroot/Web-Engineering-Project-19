@@ -1,0 +1,31 @@
+<a href="/">Back</a>
+<h2>Extra Statistics</h2>
+
+<label>Airport code 1:<br>
+<input [(ngModel)]="airportCode1"/>
+</label><br>
+<label>Airport code 2:<br>
+<input [(ngModel)]="airportCode2"/>
+</label><br>
+<label>Carrier code:<br>
+<input [(ngModel)]="carrierCode"/>
+</label><br>
+
+<button (click)="getExtraStats()">Get</button><br><br>
+
+<ul class="extraStats">
+  <li *ngFor="let c of content;">
+    <div *ngIf="c.carrier">
+      <b>Carrier code:</b> {{c.carrier.code}}
+      <br>
+      <b>Carrier name:</b> {{c.carrier.name}}
+    </div>
+    <b>Extra statistics</b><br>
+    Late aircraft delay time mean: {{c.lateAircraftTimeMean}}<br>
+    Late aircraft delay time median: {{c.lateAircraftTimeMedian}}<br>
+    Late aircraft delay time standard deviation: {{c.lateAircraftTimeSd}}<br>
+    Carrier delay time mean: {{c.carrierTimeMean}}<br>
+    Carrier delay time median: {{c.carrierTimeMedian}}<br>
+    Carrier delay time standard deviation: {{c.carrierTimeSd}}
+  </li>
+</ul>

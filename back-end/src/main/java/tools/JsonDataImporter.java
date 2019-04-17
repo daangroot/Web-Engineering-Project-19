@@ -1,12 +1,10 @@
 package tools;
 
-import java.beans.PropertyVetoException;
 import java.io.BufferedReader;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.SQLException;
-import java.time.YearMonth;
 import java.util.*;
 
 import com.google.gson.Gson;
@@ -16,10 +14,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import database.DatabaseConnector;
-import models.Airport;
-import models.Carrier;
-import models.ExtraStatistic;
-import models.Statistic;
+import models.*;
 
 public class JsonDataImporter {
     public static void main(String[] args) {
@@ -28,8 +23,6 @@ public class JsonDataImporter {
         List<Airport> airports = new ArrayList<>();
         List<Carrier> carriers = new ArrayList<>();
         List<Statistic> stats = new ArrayList<>();
-        List<Integer> lateAircraftDelayTimesArray = new ArrayList<Integer>();
-        List<Integer> carrierDelayTimesArray = new ArrayList<Integer>();
 
         final String filePath = "C:\\\\Users\\Daan\\Downloads\\airlines.json";
         BufferedReader bufferedReader = null;
@@ -63,69 +56,47 @@ public class JsonDataImporter {
             JsonObject jsonTime = jsonObject.get("time").getAsJsonObject();
             int year = jsonTime.get("year").getAsInt();
             int month = jsonTime.get("month").getAsInt();
-            YearMonth yearMonth = YearMonth.of(year, month);
 
             JsonObject jsonStatistics = jsonObject.get("statistics").getAsJsonObject();
 
             JsonObject jsonFlightCount = jsonStatistics.get("flights").getAsJsonObject();
-            int cancelledFlightCount = jsonFlightCount.get("cancelled").getAsInt();
-            int onTimeFlightCount = jsonFlightCount.get("on time").getAsInt();
-            int delayedFlightCount = jsonFlightCount.get("delayed").getAsInt();
-            int divertedFlightCount = jsonFlightCount.get("diverted").getAsInt();
-            int totalFlightCount = jsonFlightCount.get("total").getAsInt();
+            int cancelledCount = jsonFlightCount.get("cancelled").getAsInt();
+            int onTimeCount = jsonFlightCount.get("on time").getAsInt();
+            int delayedCount = jsonFlightCount.get("delayed").getAsInt();
+            int divertedCount = jsonFlightCount.get("diverted").getAsInt();
+            int totalCount = jsonFlightCount.get("total").getAsInt();
+            FlightData flightData = new FlightData((cancelledCount > 0) ? cancelledCount:0,
+                    (onTimeCount > 0) ? onTimeCount:0, (delayedCount > 0) ? delayedCount:0,
+                    (divertedCount > 0) ? divertedCount:0, (totalCount > 0) ? totalCount:0);
 
-            JsonObject jsonDelayCount = jsonStatistics.get("# of delays").getAsJsonObject();
-            int lateAircraftDelayCount = jsonDelayCount.get("late aircraft").getAsInt();
-            int weatherDelayCount = jsonDelayCount.get("weather").getAsInt();
-            int securityDelayCount = jsonDelayCount.get("security").getAsInt();
-            int nationalAviationSystemDelayCount = jsonDelayCount.get("national aviation system").getAsInt();
-            int carrierDelayCount = jsonDelayCount.get("carrier").getAsInt();
+            JsonObject jsonDelay = jsonStatistics.get("# of delays").getAsJsonObject();
+            int lateAircraftCount = jsonDelay.get("late aircraft").getAsInt();
+            int carrierCount = jsonDelay.get("carrier").getAsInt();
+            int weatherCount = jsonDelay.get("weather").getAsInt();
+            int securityCount = jsonDelay.get("security").getAsInt();
+            int nationalAviationSystemCount = jsonDelay.get("national aviation system").getAsInt();
+            DelayData delayData = new DelayData((lateAircraftCount > 0) ? lateAircraftCount:0,
+                    (carrierCount > 0) ? carrierCount:0, (weatherCount > 0) ? weatherCount:0,
+                    (securityCount > 0) ? securityCount:0,
+                    (nationalAviationSystemCount > 0) ? nationalAviationSystemCount:0);
 
             JsonObject jsonDelayTime = jsonStatistics.get("minutes delayed").getAsJsonObject();
-            int lateAircraftDelayTime = jsonDelayTime.get("late aircraft").getAsInt();
-            int weatherDelayTime = jsonDelayTime.get("weather").getAsInt();
-            int securityDelayTime = jsonDelayTime.get("security").getAsInt();
-            int nationalAviationSystemDelayTime = jsonDelayTime.get("national aviation system").getAsInt();
-            int carrierDelayTime = jsonDelayTime.get("carrier").getAsInt();
-            int totalDelayTime = jsonDelayTime.get("total").getAsInt();
+            int lateAircraftTime = jsonDelayTime.get("late aircraft").getAsInt();
+            int carrierTime = jsonDelayTime.get("carrier").getAsInt();
+            int weatherTime = jsonDelayTime.get("weather").getAsInt();
+            int securityTime = jsonDelayTime.get("security").getAsInt();
+            int nationalAviationSystemTime = jsonDelayTime.get("national aviation system").getAsInt();
+            int totalTime = jsonDelayTime.get("total").getAsInt();
+            DelayTimeData delayTimeData = new DelayTimeData((lateAircraftTime > 0) ? lateAircraftTime:0,
+                    (carrierTime > 0) ? carrierTime:0, (weatherTime > 0) ? weatherTime:0,
+                    (securityTime > 0) ? securityTime:0,
+                    (nationalAviationSystemTime > 0) ? nationalAviationSystemTime:0,
+                    (totalTime > 0) ? totalTime:0);
 
-            Statistic stat = new Statistic(airport, carrier, yearMonth);
-            stat.setCancelledFlightCount((cancelledFlightCount > 0) ? cancelledFlightCount: 0);
-            stat.setOnTimeFlightCount((onTimeFlightCount > 0) ? onTimeFlightCount: 0);
-            stat.setDelayedFlightCount((delayedFlightCount > 0) ? delayedFlightCount: 0);
-            stat.setDivertedFlightCount((divertedFlightCount > 0) ? divertedFlightCount: 0);
-            stat.setTotalFlightCount((totalFlightCount > 0) ? totalFlightCount: 0);
+            Statistic statistic = new Statistic(airport, carrier, year, month, flightData, delayData, delayTimeData);
 
-            stat.setLateAircraftDelayCount((lateAircraftDelayCount > 0) ? lateAircraftDelayCount: 0);
-            stat.setWeatherDelayCount((weatherDelayCount > 0) ? weatherDelayCount: 0);
-            stat.setSecurityDelayCount((securityDelayCount > 0) ? securityDelayCount: 0);
-            stat.setNationalAviationSystemDelayCount((nationalAviationSystemDelayCount > 0) ? nationalAviationSystemDelayCount: 0);
-            stat.setCarrierDelayCount((carrierDelayCount > 0) ? carrierDelayCount: 0);
-
-            stat.setLateAircraftDelayTime((lateAircraftDelayTime > 0) ? lateAircraftDelayTime: 0);
-            stat.setWeatherDelayTime((weatherDelayTime > 0) ? weatherDelayTime: 0);
-            stat.setSecurityDelayTime((securityDelayTime > 0) ? securityDelayTime: 0);
-            stat.setNationalAviationSystemDelayTime((nationalAviationSystemDelayTime > 0) ? nationalAviationSystemDelayTime: 0);
-            stat.setCarrierDelayTime((carrierDelayTime > 0) ? carrierDelayTime: 0);
-            stat.setTotalDelayTime((totalDelayTime > 0) ? totalDelayTime: 0);
-
-            stats.add(stat);
-            
-            lateAircraftDelayTimesArray.add(lateAircraftDelayTime);
-            carrierDelayTimesArray.add(carrierDelayTime);
-
-            ExtraStatistic extraStatistic = new ExtraStatistic(airport, airport, carrier);
-            extraStatistic.setLateAircraftDelaysTimedMean(mean((ArrayList<Integer>) lateAircraftDelayTimesArray));
-            extraStatistic.setLateAircraftDelaysTimedMed(median((ArrayList<Integer>) lateAircraftDelayTimesArray));
-            extraStatistic.setLateAircraftDelaysTimedSd(standardDeviation((ArrayList<Integer>) lateAircraftDelayTimesArray));
-            extraStatistic.setCarrierAircraftDelaysTimedMean(mean((ArrayList<Integer>) carrierDelayTimesArray));
-            extraStatistic.setCarrierAircraftDelaysTimedMed(median((ArrayList<Integer>) carrierDelayTimesArray));
-            extraStatistic.setCarrierAircraftDelaysTimedMed(standardDeviation((ArrayList<Integer>) carrierDelayTimesArray));
+            stats.add(statistic);
         }
-
-
-
-
 
         for (Map.Entry<String, String> item : airportsMap.entrySet()) {
             Airport airport = new Airport(item.getKey(), item.getValue());
@@ -138,59 +109,12 @@ public class JsonDataImporter {
         }
 
         try {
-            DatabaseConnector dbconn = new DatabaseConnector();
-            dbconn.addAirports(airports);
-            dbconn.addCarriers(carriers);
-            dbconn.addStatistics(stats);
-        } catch (PropertyVetoException e) {
-            e.printStackTrace();
+            DatabaseConnector databaseConnector = new DatabaseConnector();
+            databaseConnector.addAirports(airports);
+            databaseConnector.addCarriers(carriers);
+            databaseConnector.addStatistics(stats);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public static double median(ArrayList<Integer> values){
-        Arrays.sort(new ArrayList[]{values});
-        double median;
-        // get count of scores
-        int totalElements = values.size();
-        // check if total number of scores is even
-        if (totalElements % 2 == 0) {
-            int sumOfMiddleElements = values.get(totalElements / 2) + values.get(totalElements / 2 - 1);
-            // calculate average of middle elements
-            median = ((double) sumOfMiddleElements) / 2;
-        } else {
-            // get the middle element
-            median = (double) values.get(values.size() / 2);
-        }
-        return median;
-    }
-
-    public static double mean(ArrayList<Integer> values){
-        double mean;
-        int sum = 0, i;
-        for(double num : values) {
-            sum+= num;
-        }
-        mean = sum/values.size();
-        return mean;
-    }
-
-    public static double standardDeviation(ArrayList<Integer> values)
-    {
-        double sum = 0.0, standardDeviation = 0.0;
-        int length = values.size();
-
-        for(double num : values) {
-            sum += num;
-        }
-
-        double mean = sum/length;
-
-        for(double num: values) {
-            standardDeviation += Math.pow(num - mean, 2);
-        }
-
-        return Math.sqrt(standardDeviation/length);
     }
 }

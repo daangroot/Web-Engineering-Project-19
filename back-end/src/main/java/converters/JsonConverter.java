@@ -1,16 +1,11 @@
 package converters;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import models.Airport;
-import models.Carrier;
-import models.ExtraStatistic;
-import models.Statistic;
+import com.google.gson.*;
+import models.*;
+import rest.MainRestController;
 
 public class JsonConverter implements DataConverter {
     private Gson gson;
@@ -20,347 +15,257 @@ public class JsonConverter implements DataConverter {
     }
 
     @Override
-    public String AirportsToString(List<Airport> airports) {
+    public String airportsToString(List<Airport> airports) {
         return gson.toJson(airports);
     }
 
+    public String airportsToStringWithLinks(List<Airport> airports, String baseHref) {
+        JsonArray jsonArray = new JsonArray();
+
+        for (Airport airport : airports) {
+            JsonObject jsonObject = new JsonObject();
+
+            jsonObject.add("airport", gson.toJsonTree(airport));
+
+            Link link = new Link(baseHref + airport.getCode() + "/", "airport", "GET");
+            List<Link> links = new ArrayList<>();
+            links.add(link);
+
+            jsonObject.add("links", gson.toJsonTree(links));
+
+            jsonArray.add(jsonObject);
+        }
+
+        return jsonArray.toString();
+    }
+
     @Override
-    public String CarriersToString(List<Carrier> carriers) {
+    public String carriersToString(List<Carrier> carriers) {
         return gson.toJson(carriers);
     }
 
-    @Override
-    public String StatisticToString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth) {
-        JsonObject jsonObject = gson.toJsonTree(statistic).getAsJsonObject();
+    public String carriersToStringWithLinks(List<Carrier> carriers, String baseHref) {
+        JsonArray jsonArray = new JsonArray();
 
-        if (!airport) {
-            jsonObject.remove("airport");
-        }
+        for (Carrier carrier : carriers) {
+            JsonObject jsonObject = new JsonObject();
 
-        if (!carrier) {
-            jsonObject.remove("carrier");
-        }
+            jsonObject.add("carrier", gson.toJsonTree(carrier));
 
-        if (!yearMonth) {
-            jsonObject.remove("yearMonth");
-        }
+            Link link = new Link(baseHref + carrier.getCode() + "/", "carrier", "GET");
+            List<Link> links = new ArrayList<>();
+            links.add(link);
 
-        return jsonObject.toString();
-    }
+            jsonObject.add("links", gson.toJsonTree(links));
 
-    @Override
-    public String StatisticsToString(List<Statistic> statistics, boolean airport, boolean carrier, boolean yearMonth) {
-        JsonArray jsonArray = gson.toJsonTree(statistics).getAsJsonArray();
-
-        for (JsonElement jsonElement : jsonArray) {
-            JsonObject jsonObject = jsonElement.getAsJsonObject();
-
-            if (!airport) {
-                jsonObject.remove("airport");
-            }
-
-            if (!carrier) {
-                jsonObject.remove("carrier");
-            }
-
-            if (!yearMonth) {
-                jsonObject.remove("yearMonth");
-            }
+            jsonArray.add(jsonObject);
         }
 
         return jsonArray.toString();
     }
 
     @Override
-    public String StatisticToFlightString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth,
-                                          boolean cancelledFlightCount, boolean onTimeFlightCount, boolean delayedFlightCount,
-                                          boolean divertedFlightCount, boolean totalFlightCount) {
-        JsonObject jsonObject = gson.toJsonTree(statistic).getAsJsonObject();
+    public String statisticsToString(List<Statistic> statistics, StatisticDataSelectorHelper includedData) {
+        JsonArray jsonArray = new JsonArray();
 
-        if (!airport) {
-            jsonObject.remove("airport");
-        }
+        for (Statistic statistic : statistics) {
+            JsonObject jsonObject = new JsonObject();
 
-        if (!carrier) {
-            jsonObject.remove("carrier");
-        }
-
-        if (!yearMonth) {
-            jsonObject.remove("yearMonth");
-        }
-
-        if (!cancelledFlightCount) {
-            jsonObject.remove("cancelledFlightCount");
-        }
-
-        if (!onTimeFlightCount) {
-            jsonObject.remove("onTimeFlightCount");
-        }
-
-        if (!delayedFlightCount) {
-            jsonObject.remove("delayedFlightCount");
-        }
-
-        if (!divertedFlightCount) {
-            jsonObject.remove("divertedFlightCount");
-        }
-
-        if (!totalFlightCount) {
-            jsonObject.remove("totalFlightCount");
-        }
-        return jsonObject.toString();
-
-    }
-
-    @Override
-    public String StatisticsToFlightString(List<Statistic> statistics, boolean airport, boolean carrier,
-                                           boolean yearMonth, boolean cancelledFlightCount, boolean onTimeFlightCount, boolean delayedFlightCount,
-                                           boolean divertedFlightCount, boolean totalFlightCount) {
-        JsonArray jsonArray = gson.toJsonTree(statistics).getAsJsonArray();
-
-        for (JsonElement jsonElement : jsonArray) {
-            JsonObject jsonObject = jsonElement.getAsJsonObject();
-
-            if (!airport) {
-                jsonObject.remove("airport");
+            if (includedData.withAirport()) {
+                jsonObject.add("airport", gson.toJsonTree(statistic.getAirport()));
             }
 
-            if (!carrier) {
-                jsonObject.remove("carrier");
+            if (includedData.withCarrier()) {
+                jsonObject.add("carrier", gson.toJsonTree(statistic.getCarrier()));
             }
 
-            if (!yearMonth) {
-                jsonObject.remove("yearMonth");
+            if (includedData.withYear()) {
+                jsonObject.addProperty("year", statistic.getYear());
             }
 
-            if (!cancelledFlightCount) {
-                jsonObject.remove("cancelledFlightCount");
+            if (includedData.withMonth()) {
+                jsonObject.addProperty("month", statistic.getMonth());
             }
 
-            if (!onTimeFlightCount) {
-                jsonObject.remove("onTimeFlightCount");
+            if (includedData.withFlightData()) {
+                FlightData flightData = statistic.getFlightData();
+                JsonObject flightDataJson = new JsonObject();
+
+
+                if (includedData.withCancelledCount()) {
+                    flightDataJson.addProperty("cancelledCount", flightData.getCancelledCount());
+                }
+
+                if (includedData.withOnTimeCount()) {
+                    flightDataJson.addProperty("onTimeCount", flightData.getOnTimeCount());
+                }
+
+                if (includedData.withDelayedCount()) {
+                    flightDataJson.addProperty("delayedCount", flightData.getDelayedCount());
+                }
+
+                if (includedData.withDivertedCount()) {
+                    flightDataJson.addProperty("divertedCount", flightData.getDivertedCount());
+                }
+
+                if (includedData.withTotalCount()) {
+                    flightDataJson.addProperty("totalCount", flightData.getTotalCount());
+                }
+
+                jsonObject.add("flightData", flightDataJson);
             }
 
-            if (!delayedFlightCount) {
-                jsonObject.remove("delayedFlightCount");
+            if (includedData.withDelayData()) {
+                DelayData delayData = statistic.getDelayData();
+                JsonObject delayDataJson = new JsonObject();
+
+                if (includedData.withLateAircraftCount()) {
+                    delayDataJson.addProperty("lateAircraftCount", delayData.getLateAircraftCount());
+                }
+
+                if (includedData.withCarrierCount()) {
+                    delayDataJson.addProperty("carrierCount", delayData.getCarrierCount());
+                }
+
+                if (includedData.withWeatherCount()) {
+                    delayDataJson.addProperty("weatherCount", delayData.getWeatherCount());
+                }
+
+                if (includedData.withSecurityCount()) {
+                    delayDataJson.addProperty("securityCount", delayData.getSecurityCount());
+                }
+
+                if (includedData.withNationalAviationSystemCount()) {
+                    delayDataJson.addProperty("nationalAviationSystemCount",
+                            delayData.getNationalAviationSystemCount());
+                }
+
+                jsonObject.add("delayData", delayDataJson);
             }
 
-            if (!divertedFlightCount) {
-                jsonObject.remove("divertedFlightCount");
+            if (includedData.withDelayTimeData()) {
+                DelayTimeData delayTimeData = statistic.getDelayTimeData();
+                JsonObject delayTimeDataJson = new JsonObject();
+
+                if (includedData.withLateAircraftTime()) {
+                    delayTimeDataJson.addProperty("lateAircraftTime", delayTimeData.getLateAircraftTime());
+                }
+
+                if (includedData.withCarrierTime()) {
+                    delayTimeDataJson.addProperty("carrierTime", delayTimeData.getCarrierTime());
+                }
+
+                if (includedData.withWeatherTime()) {
+                    delayTimeDataJson.addProperty("weatherTime", delayTimeData.getWeatherTime());
+                }
+
+                if (includedData.withSecurityTime()) {
+                    delayTimeDataJson.addProperty("securityTime", delayTimeData.getSecurityTime());
+                }
+
+                if (includedData.withNationalAviationSystemTime()) {
+                    delayTimeDataJson.addProperty("nationalAviationSystemTime",
+                            delayTimeData.getNationalAviationSystemTime());
+                }
+
+                if (includedData.withTotalTime()) {
+                    delayTimeDataJson.addProperty("totalTime", delayTimeData.getTotalTime());
+                }
+
+                jsonObject.add("delayTimeData", delayTimeDataJson);
+
             }
 
-            if (!totalFlightCount) {
-                jsonObject.remove("totalFlightCount");
-            }
-            return jsonObject.toString();
-
-        }
-    }
-
-    @Override
-    public String StatisticToDelayString(Statistic statistic, boolean airport, boolean carrier, boolean yearMonth,
-                                         boolean lateAircraftDelayCount, boolean carrierDelayCount, boolean weatherDelayCount,
-                                         boolean securityDelayCount, boolean nationalAviationSystemDelayCount) {
-        JsonObject jsonObject = gson.toJsonTree(statistic).getAsJsonObject();
-
-        if (!airport) {
-            jsonObject.remove("airport");
-        }
-
-        if (!carrier) {
-            jsonObject.remove("carrier");
-        }
-
-        if (!yearMonth) {
-            jsonObject.remove("yearMonth");
-        }
-
-        if (!lateAircraftDelayCount) {
-            jsonObject.remove("lateAircraftDelayCount");
-        }
-
-        if (!carrierDelayCount) {
-            jsonObject.remove("carrierDelayCount");
-        }
-
-        if (!weatherDelayCount) {
-            jsonObject.remove("weatherDelayCount");
-        }
-
-        if (!securityDelayCount) {
-            jsonObject.remove("securityDelayCount");
-        }
-
-        if (!nationalAviationSystemDelayCount) {
-            jsonObject.remove("nationalAviationSystemDelayCount");
-        }
-        return jsonObject.toString();
-    }
-
-
-    @Override
-    public String StatisticsToDelayString(List<Statistic> statistics, boolean airport, boolean carrier, boolean yearMonth,
-                                          boolean lateAircraftDelayCount, boolean carrierDelayCount, boolean weatherDelayCount,
-                                          boolean securityDelayCount, boolean nationalAviationSystemDelayCount) {
-        JsonArray jsonArray = gson.toJsonTree(statistics).getAsJsonArray();
-
-        for (JsonElement jsonElement : jsonArray) {
-            JsonObject jsonObject = jsonElement.getAsJsonObject();
-
-            if (!airport) {
-                jsonObject.remove("airport");
-            }
-
-            if (!carrier) {
-                jsonObject.remove("carrier");
-            }
-
-            if (!yearMonth) {
-                jsonObject.remove("yearMonth");
-            }
-
-            if (!lateAircraftDelayCount) {
-                jsonObject.remove("lateAircraftDelayCount");
-            }
-
-            if (!carrierDelayCount) {
-                jsonObject.remove("carrierDelayCount");
-            }
-
-            if (!weatherDelayCount) {
-                jsonObject.remove("weatherDelayCount");
-            }
-
-            if (!securityDelayCount) {
-                jsonObject.remove("securityDelayCount");
-            }
-
-            if (!nationalAviationSystemDelayCount) {
-                jsonObject.remove("nationalAviationSystemDelayCount");
-            }
-            return jsonObject.toString();
-
-        }
-    }
-
-    @Override
-    public String StatisticToDelayTimeString(Statistic statistic, boolean airport, boolean carrier,
-                                             boolean yearMonth, boolean lateAircraftDelayTime, boolean carrierDelayTime, boolean weatherDelayTime,
-                                             boolean securityDelayTime, boolean nationalAviationSystemDelayTime, boolean totalDelayTime) {
-        JsonObject jsonObject = gson.toJsonTree(statistic).getAsJsonObject();
-
-        if (!airport) {
-            jsonObject.remove("airport");
-        }
-
-        if (!carrier) {
-            jsonObject.remove("carrier");
-        }
-
-        if (!yearMonth) {
-            jsonObject.remove("yearMonth");
-        }
-
-        if (!lateAircraftDelayTime) {
-            jsonObject.remove("lateAircraftDelayCount");
-        }
-
-        if (!carrierDelayTime) {
-            jsonObject.remove("carrierDelayCount");
-        }
-
-        if (!weatherDelayTime) {
-            jsonObject.remove("weatherDelayCount");
-        }
-
-        if (!securityDelayTime) {
-            jsonObject.remove("securityDelayCount");
-        }
-
-        if (!nationalAviationSystemDelayTime) {
-            jsonObject.remove("nationalAviationSystemDelayCount");
-        }
-
-        if (!totalDelayTime) {
-            jsonObject.remove("totalDelayTime")
-        }
-
-        return jsonObject.toString();
-
-    }
-
-    @Override
-    public String StatisticsToDelayTimeString(List<Statistic> statistics, boolean airport, boolean carrier,
-                                              boolean yearMonth, boolean lateAircraftDelayTime, boolean carrierDelayTime, boolean weatherDelayTime,
-                                              boolean securityDelayTime, boolean nationalAviationSystemDelayTime, boolean totalDelayTime) {
-        JsonArray jsonArray = gson.toJsonTree(statistics).getAsJsonArray();
-
-        for (JsonElement jsonElement : jsonArray) {
-            JsonObject jsonObject = jsonElement.getAsJsonObject();
-
-            if (!airport) {
-                jsonObject.remove("airport");
-            }
-
-            if (!carrier) {
-                jsonObject.remove("carrier");
-            }
-
-            if (!yearMonth) {
-                jsonObject.remove("yearMonth");
-            }
-
-            if (!lateAircraftDelayTime) {
-                jsonObject.remove("lateAircraftDelayTime");
-            }
-
-            if (!carrierDelayTime) {
-                jsonObject.remove("carrierDelayTime");
-            }
-
-            if (!weatherDelayTime) {
-                jsonObject.remove("weatherDelayTime");
-            }
-
-            if (!securityDelayTime) {
-                jsonObject.remove("securityDelayTime");
-            }
-
-            if (!nationalAviationSystemDelayTime) {
-                jsonObject.remove("nationalAviationSystemDelayTime");
-            }
-
-            if (!totalDelayTime) {
-                jsonObject.remove("totalDelayTime")
-            }
+            jsonArray.add(jsonObject);
         }
 
         return jsonArray.toString();
     }
 
     @Override
-    public String ExtraStatisticsToString(List<ExtraStatistic> extraStatistics, boolean airport1, boolean airport2, boolean carrier) {
-        JsonArray jsonArray = gson.toJsonTree(extraStatistics).getAsJsonArray();
+    public List<Statistic> stringToStatistics(String statisticsData, Airport airport, Carrier carrier, Integer year,
+                                              Integer month) {
+        List<Statistic> statistics = new ArrayList<>();
+        JsonArray jsonArray = gson.fromJson(statisticsData, JsonArray.class);
+
+        Airport tempAirport = airport;
+        Carrier tempCarrier = carrier;
+        Integer tempYear = year;
+        Integer tempMonth = month;
 
         for (JsonElement jsonElement : jsonArray) {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-            if (!airport1) {
-                jsonObject.remove("airport");
+            if (airport == null) {
+                tempAirport =  new Airport(jsonObject.get("airport").getAsJsonObject().get("code").getAsString(), null);
             }
 
-            if (!airport2) {
-                jsonObject.remove("airport");
+            if (carrier == null) {
+                tempCarrier = new Carrier(jsonObject.get("carrier").getAsJsonObject().get("code").getAsString(), null);
             }
 
-            if (!carrier) {
-                jsonObject.remove("carrier");
+            if (year == null) {
+                tempYear = jsonObject.get("year").getAsInt();
             }
 
+            if (month == null) {
+                tempMonth = jsonObject.get("month").getAsInt();
+            }
+
+            FlightData flightData = gson.fromJson(jsonObject.get("flightData"), FlightData.class);
+            DelayData delayData = gson.fromJson(jsonObject.get("delayData"), DelayData.class);
+            DelayTimeData delayTimeData = gson.fromJson(jsonObject.get("delayTimeData"), DelayTimeData.class);
+
+            if (flightData == null || delayData == null || delayTimeData == null) {
+                throw new JsonParseException("Missing data in JSON string.");
+            }
+
+            Statistic statistic = new Statistic(tempAirport, tempCarrier, tempYear, tempMonth, flightData, delayData,
+                    delayTimeData);
+            statistics.add(statistic);
+        }
+
+        return statistics;
+    }
+
+    @Override
+    public String extraStatisticsToString(List<ExtraStatistic> extraStatistics, boolean withCarrier) {
+        JsonArray jsonArray = new JsonArray();
+
+        for (ExtraStatistic extraStatistic : extraStatistics) {
+            JsonObject jsonObject = new JsonObject();
+
+            if (withCarrier) {
+                jsonObject.add("carrier", gson.toJsonTree(extraStatistic.getCarrier()));
+            }
+
+            jsonObject.addProperty("lateAircraftTimeMean", extraStatistic.getLateAircraftTimeMean());
+            jsonObject.addProperty("lateAircraftTimeMedian", extraStatistic.getLateAircraftTimeMedian());
+            jsonObject.addProperty("lateAircraftTimeSd", extraStatistic.getLateAircraftTimeSd());
+
+            jsonObject.addProperty("carrierTimeMean", extraStatistic.getCarrierTimeMean());
+            jsonObject.addProperty("carrierTimeMedian", extraStatistic.getCarrierTimeMedian());
+            jsonObject.addProperty("carrierTimeSd", extraStatistic.getCarrierTimeSd());
+
+            jsonArray.add(jsonObject);
         }
 
         return jsonArray.toString();
     }
 
+    public String mergeLinksAndJson(List<Link> links, String json) {
+        JsonObject jsonObject = new JsonObject();
 
+        if (json != null) {
+            JsonElement jsonElement = gson.fromJson(json, JsonElement.class);
+            jsonObject.add("content", jsonElement);
+        }
+
+        if (links != null) {
+            JsonArray jsonLinks = gson.toJsonTree(links).getAsJsonArray();
+            jsonObject.add("links", jsonLinks);
+        }
+
+        return jsonObject.toString();
+    }
 }
